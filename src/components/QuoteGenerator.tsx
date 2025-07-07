@@ -7,11 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Sparkles, Quote, Save, Copy } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuotes } from "@/hooks/useQuotes";
+import { FileUpload, UploadedFile } from "@/components/FileUpload";
 
 export function QuoteGenerator() {
   const [inputText, setInputText] = useState("");
   const [generatedQuote, setGeneratedQuote] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState<UploadedFile[]>([]);
   const { toast } = useToast();
   const { user } = useAuth();
   const { saveQuote } = useQuotes(user?.id);
@@ -29,7 +31,7 @@ export function QuoteGenerator() {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-quote', {
-        body: { text: inputText.trim() }
+        body: { text: inputText.trim(), files: attachedFiles }
       });
 
       if (error) {
@@ -60,6 +62,7 @@ export function QuoteGenerator() {
   const clearAll = () => {
     setInputText("");
     setGeneratedQuote("");
+    setAttachedFiles([]);
   };
 
   const handleSaveQuote = async () => {
@@ -139,6 +142,12 @@ export function QuoteGenerator() {
                 />
               </div>
               
+              <FileUpload
+                onFilesChange={setAttachedFiles}
+                files={attachedFiles}
+                disabled={isLoading}
+              />
+              
               <div className="flex gap-4 justify-center pt-4">
                 <Button
                   variant="hero"
@@ -160,7 +169,7 @@ export function QuoteGenerator() {
                   )}
                 </Button>
                 
-                {(inputText || generatedQuote) && (
+                {(inputText || generatedQuote || attachedFiles.length > 0) && (
                   <Button
                     variant="luxury"
                     size="lg"
