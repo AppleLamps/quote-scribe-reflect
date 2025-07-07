@@ -81,7 +81,7 @@ export function QuoteGenerator() {
     if (!generatedQuote) return;
 
     try {
-      await navigator.clipboard.writeText(generatedQuote);
+      await navigator.clipboard.writeText(`"${generatedQuote}"`);
       toast({
         title: "Quote Copied",
         description: "The quote has been copied to your clipboard.",
