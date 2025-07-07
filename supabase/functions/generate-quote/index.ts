@@ -22,37 +22,84 @@ serve(async (req) => {
     const { text, files } = await req.json();
 
     if (!text || text.trim().length === 0) {
-      throw new Error('Text content is required');
+      if (!files || files.length === 0) {
+        throw new Error('Either text content or files are required');
+      }
     }
 
-    // Process files to extract text content
-    let combinedContent = text;
+    // Prepare messages for OpenAI
+    const messages = [
+      { 
+        role: 'system', 
+        content: 'You are a profound reflection generator. Your task is to analyze the provided content (text and/or images) and generate a single, thought-provoking quote or reflection that captures the essence, tone, and emotional energy. If only images are provided, analyze the visual content, mood, colors, subjects, and any text within the images to create your reflection. Match the tone exactly - whether it\'s angry, frustrated, joyful, dark, offensive, sarcastic, or any other emotion. Do not sanitize or make it more positive than the original. Capture the raw truth and feeling within the content. Keep it concise but impactful - ideally 1-3 sentences. Do not include quotation marks in your response.' 
+      }
+    ];
+
+    // Build user message with text and/or images
+    const userMessageContent = [];
     
+    // Add text if provided
+    if (text && text.trim().length > 0) {
+      userMessageContent.push({
+        type: 'text',
+        text: `Text content: ${text.trim()}`
+      });
+    }
+
+    // Process files
     if (files && files.length > 0) {
       console.log(`Processing ${files.length} files`);
       
       for (const file of files) {
         try {
           if (file.type.startsWith('image/')) {
-            // For images, we'll include them in the context
-            combinedContent += `\n\n[Image attached: ${file.name}]`;
+            // For images, add them directly to the vision model
+            userMessageContent.push({
+              type: 'image_url',
+              image_url: {
+                url: file.url,
+                detail: 'high'
+              }
+            });
           } else if (file.type === 'text/plain' || file.type === 'text/markdown') {
             // For text files, fetch and include content
             const fileResponse = await fetch(file.url);
             if (fileResponse.ok) {
               const fileContent = await fileResponse.text();
-              combinedContent += `\n\nContent from ${file.name}:\n${fileContent}`;
+              userMessageContent.push({
+                type: 'text',
+                text: `Content from ${file.name}:\n${fileContent}`
+              });
             }
           } else {
             // For other file types, just mention them
-            combinedContent += `\n\n[File attached: ${file.name}]`;
+            userMessageContent.push({
+              type: 'text',
+              text: `[File attached: ${file.name}]`
+            });
           }
         } catch (error) {
           console.error(`Error processing file ${file.name}:`, error);
-          combinedContent += `\n\n[File attached: ${file.name} - could not process content]`;
+          userMessageContent.push({
+            type: 'text',
+            text: `[File attached: ${file.name} - could not process content]`
+          });
         }
       }
     }
+
+    // If no content was added, add a default message
+    if (userMessageContent.length === 0) {
+      userMessageContent.push({
+        type: 'text',
+        text: 'Please generate a profound quote or reflection.'
+      });
+    }
+
+    messages.push({
+      role: 'user',
+      content: userMessageContent
+    });
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -62,13 +109,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: 'gpt-4o-mini',
-        messages: [
-          { 
-            role: 'system', 
-            content: 'You are a profound reflection generator. Your task is to read the user\'s text and any attached files carefully and generate a single, thought-provoking quote or reflection that captures the essence, tone, and emotional energy of their content. If images are attached, consider them as part of the context. Match the tone exactly - whether it\'s angry, frustrated, joyful, dark, offensive, sarcastic, or any other emotion. Do not sanitize or make it more positive than the original. Capture the raw truth and feeling within their words and attachments. Keep it concise but impactful - ideally 1-3 sentences. Do not include quotation marks in your response.' 
-          },
-          { role: 'user', content: `Please generate a profound quote or reflection based on this content:\n\n${combinedContent}` }
-        ],
+        messages: messages,
         max_tokens: 1000,
         temperature: 0.8,
       }),

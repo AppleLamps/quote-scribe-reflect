@@ -19,10 +19,10 @@ export function QuoteGenerator() {
   const { saveQuote } = useQuotes(user?.id);
 
   const generateQuote = async () => {
-    if (!inputText.trim()) {
+    if (!inputText.trim() && attachedFiles.length === 0) {
       toast({
         title: "Input Required",
-        description: "Please enter some text to generate a quote from.",
+        description: "Please enter some text or attach files to generate a quote from.",
         variant: "destructive",
       });
       return;
@@ -115,10 +115,10 @@ export function QuoteGenerator() {
           </div>
           <div className="space-y-4">
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-inter font-light">
-              Transform any text into profound wisdom
+              Transform any text or image into profound wisdom
             </p>
             <p className="text-lg text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed font-inter">
-              Paste your thoughts, articles, or stories and discover the deeper meanings within through AI-generated reflections
+              Share your thoughts, upload photos, or paste articles to discover deeper meanings through AI-generated reflections
             </p>
           </div>
         </div>
@@ -134,7 +134,7 @@ export function QuoteGenerator() {
                 </label>
                 <Textarea
                   id="input-text"
-                  placeholder="Paste your article, thoughts, journal entry, or any text you'd like to reflect upon..."
+                  placeholder="Share your thoughts, paste an article, or simply attach images to reflect upon..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   className="min-h-[220px] resize-none text-base leading-relaxed bg-background/30 border-glass focus:border-white/30 focus:shadow-glow font-inter backdrop-blur-sm transition-luxury"
@@ -153,7 +153,7 @@ export function QuoteGenerator() {
                   variant="hero"
                   size="lg"
                   onClick={generateQuote}
-                  disabled={isLoading || !inputText.trim()}
+                  disabled={isLoading || (!inputText.trim() && attachedFiles.length === 0)}
                   className="min-w-[160px] h-12 text-base font-inter"
                 >
                   {isLoading ? (
@@ -207,7 +207,7 @@ export function QuoteGenerator() {
                 
                 <div className="space-y-6">
                   <p className="text-base text-muted-foreground/80 font-inter font-light">
-                    Generated reflection from your text
+                    Generated reflection from your content
                   </p>
                   <div className="flex gap-3 justify-center">
                     <Button
