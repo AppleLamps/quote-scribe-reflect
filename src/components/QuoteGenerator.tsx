@@ -14,6 +14,7 @@ export function QuoteGenerator() {
   const [generatedQuote, setGeneratedQuote] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<UploadedFile[]>([]);
+  const [additionalDirections, setAdditionalDirections] = useState("");
   const { toast } = useToast();
   const { user } = useAuth();
   const { saveQuote } = useQuotes(user?.id);
@@ -31,7 +32,11 @@ export function QuoteGenerator() {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-quote', {
-        body: { text: inputText.trim(), files: attachedFiles }
+        body: { 
+          text: inputText.trim(), 
+          files: attachedFiles,
+          directions: additionalDirections.trim() || undefined
+        }
       });
 
       if (error) {
@@ -63,6 +68,7 @@ export function QuoteGenerator() {
     setInputText("");
     setGeneratedQuote("");
     setAttachedFiles([]);
+    setAdditionalDirections("");
   };
 
   const handleSaveQuote = async () => {
@@ -148,6 +154,20 @@ export function QuoteGenerator() {
                 disabled={isLoading}
               />
               
+              <div className="space-y-3">
+                <label htmlFor="additional-directions" className="text-base font-medium text-foreground font-inter">
+                  Additional directions (optional)
+                </label>
+                <Textarea
+                  id="additional-directions"
+                  placeholder="Provide specific instructions for the AI (e.g., 'Make it humorous', 'Focus on hope', 'Use a philosophical tone')..."
+                  value={additionalDirections}
+                  onChange={(e) => setAdditionalDirections(e.target.value)}
+                  className="min-h-[100px] resize-none text-base leading-relaxed bg-background/30 border-glass focus:border-white/30 focus:shadow-glow font-inter backdrop-blur-sm transition-luxury"
+                  disabled={isLoading}
+                />
+              </div>
+              
               <div className="flex gap-4 justify-center pt-4">
                 <Button
                   variant="hero"
@@ -169,7 +189,7 @@ export function QuoteGenerator() {
                   )}
                 </Button>
                 
-                {(inputText || generatedQuote || attachedFiles.length > 0) && (
+                {(inputText || generatedQuote || attachedFiles.length > 0 || additionalDirections) && (
                   <Button
                     variant="luxury"
                     size="lg"

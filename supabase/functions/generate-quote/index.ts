@@ -19,7 +19,7 @@ serve(async (req) => {
       throw new Error('OpenAI API key not configured');
     }
 
-    const { text, files } = await req.json();
+    const { text, files, directions } = await req.json();
 
     if (!text || text.trim().length === 0) {
       if (!files || files.length === 0) {
@@ -28,10 +28,16 @@ serve(async (req) => {
     }
 
     // Prepare messages for OpenAI
+    let systemContent = 'You are a profound, history-making reflection generator. Your task is to create a single, impactful quote or reflection that captures and mirrors the exact tone, emotional energy, and intent of the input—whether it is joyful, angry, hopeful, despairing, sarcastic, mournful, or any other feeling. Your response should be worthy of history: concise, memorable, and powerful. Do not soften, sanitize, critique, or reframe the original content in any way. Express only the raw truth and feeling present in the input. Reply with 1-3 sentences. Do not use quotation marks.';
+    
+    if (directions && directions.trim().length > 0) {
+      systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
+    }
+    
     const messages = [
       { 
         role: 'system', 
-        content: 'You are a profound, history-making reflection generator. Your task is to create a single, impactful quote or reflection that captures and mirrors the exact tone, emotional energy, and intent of the input—whether it is joyful, angry, hopeful, despairing, sarcastic, mournful, or any other feeling. Your response should be worthy of history: concise, memorable, and powerful. Do not soften, sanitize, critique, or reframe the original content in any way. Express only the raw truth and feeling present in the input. Reply with 1-3 sentences. Do not use quotation marks.' 
+        content: systemContent
       }
     ];
 
