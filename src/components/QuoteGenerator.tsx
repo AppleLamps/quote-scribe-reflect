@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Sparkles, Quote, Save } from "lucide-react";
+import { Loader2, Sparkles, Quote, Save, Copy } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuotes } from "@/hooks/useQuotes";
 
@@ -75,6 +75,25 @@ export function QuoteGenerator() {
     }
 
     await saveQuote(generatedQuote, inputText);
+  };
+
+  const handleCopyQuote = async () => {
+    if (!generatedQuote) return;
+
+    try {
+      await navigator.clipboard.writeText(generatedQuote);
+      toast({
+        title: "Quote Copied",
+        description: "The quote has been copied to your clipboard.",
+      });
+    } catch (error) {
+      console.error('Error copying quote:', error);
+      toast({
+        title: "Copy Failed",
+        description: "Failed to copy quote. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -162,17 +181,28 @@ export function QuoteGenerator() {
                   <p className="text-sm text-muted-foreground">
                     Generated reflection from your text
                   </p>
-                  {user && (
+                  <div className="flex gap-2">
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={handleSaveQuote}
+                      onClick={handleCopyQuote}
                       className="text-primary hover:text-primary-foreground hover:bg-primary/20"
                     >
-                      <Save className="h-4 w-4" />
-                      Save Quote
+                      <Copy className="h-4 w-4" />
+                      Copy Quote
                     </Button>
-                  )}
+                    {user && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleSaveQuote}
+                        className="text-primary hover:text-primary-foreground hover:bg-primary/20"
+                      >
+                        <Save className="h-4 w-4" />
+                        Save Quote
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </CardContent>
