@@ -32,7 +32,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4.5-preview',
         messages: [
           { 
             role: 'system', 
@@ -40,7 +40,7 @@ serve(async (req) => {
           },
           { role: 'user', content: `Please generate a profound quote or reflection based on this text:\n\n${text}` }
         ],
-        max_tokens: 150,
+        max_tokens: 1000,
         temperature: 0.8,
       }),
     });
