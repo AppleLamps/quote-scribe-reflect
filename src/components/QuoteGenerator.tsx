@@ -4,13 +4,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Sparkles, Quote } from "lucide-react";
+import { Loader2, Sparkles, Quote, Save } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useQuotes } from "@/hooks/useQuotes";
 
 export function QuoteGenerator() {
   const [inputText, setInputText] = useState("");
   const [generatedQuote, setGeneratedQuote] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const { saveQuote } = useQuotes(user?.id);
 
   const generateQuote = async () => {
     if (!inputText.trim()) {
@@ -56,6 +60,21 @@ export function QuoteGenerator() {
   const clearAll = () => {
     setInputText("");
     setGeneratedQuote("");
+  };
+
+  const handleSaveQuote = async () => {
+    if (!generatedQuote) return;
+    
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to save quotes to your collection.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    await saveQuote(generatedQuote, inputText);
   };
 
   return (
@@ -139,9 +158,22 @@ export function QuoteGenerator() {
                   "{generatedQuote}"
                 </blockquote>
                 <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent w-24 mx-auto"></div>
-                <p className="text-sm text-muted-foreground">
-                  Generated reflection from your text
-                </p>
+                <div className="flex items-center justify-center gap-4 mt-4">
+                  <p className="text-sm text-muted-foreground">
+                    Generated reflection from your text
+                  </p>
+                  {user && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleSaveQuote}
+                      className="text-primary hover:text-primary-foreground hover:bg-primary/20"
+                    >
+                      <Save className="h-4 w-4" />
+                      Save Quote
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
