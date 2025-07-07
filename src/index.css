@@ -36,12 +36,23 @@ All colors MUST be HSL.
     --input: 240 3.7% 15.9%;
     --ring: 142.1 76.2% 36.3%;
 
-    /* Custom design tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(142.1 76.2% 36.3%), hsl(158.1 64.4% 51.6%));
-    --gradient-subtle: linear-gradient(180deg, hsl(240 10% 3.9%), hsl(240 3.7% 15.9%));
-    --shadow-elegant: 0 10px 30px -10px hsl(142.1 76.2% 36.3% / 0.3);
-    --shadow-glow: 0 0 40px hsl(142.1 76.2% 36.3% / 0.15);
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Premium design tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(240 100% 70%), hsl(280 100% 75%), hsl(320 100% 70%));
+    --gradient-secondary: linear-gradient(135deg, hsl(220 100% 95%), hsl(240 100% 98%));
+    --gradient-subtle: linear-gradient(180deg, hsl(240 10% 4%), hsl(240 8% 8%));
+    --gradient-card: linear-gradient(145deg, hsl(240 10% 5%), hsl(240 8% 7%));
+    --gradient-accent: linear-gradient(90deg, hsl(240 100% 70% / 0.1), hsl(280 100% 75% / 0.1));
+    
+    --shadow-elegant: 0 20px 60px -15px hsl(240 100% 70% / 0.4);
+    --shadow-glow: 0 0 80px hsl(240 100% 70% / 0.2);
+    --shadow-luxury: 0 8px 32px hsl(240 8% 4% / 0.8), 0 2px 8px hsl(240 100% 70% / 0.1);
+    --shadow-premium: inset 0 1px 0 hsl(240 100% 95% / 0.1), 0 1px 3px hsl(240 8% 4% / 0.5);
+    
+    --border-luxury: 1px solid hsl(240 100% 70% / 0.2);
+    --border-glass: 1px solid hsl(240 100% 95% / 0.1);
+    
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-luxury: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 
     --radius: 0.5rem;
 

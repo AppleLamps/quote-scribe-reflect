@@ -100,25 +100,33 @@ export function QuoteGenerator() {
     <div className="min-h-screen bg-gradient-subtle flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 mb-4">
-            <Sparkles className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="relative">
+              <Sparkles className="h-10 w-10 text-transparent bg-gradient-primary bg-clip-text" />
+              <div className="absolute inset-0 h-10 w-10 bg-gradient-primary opacity-20 blur-xl"></div>
+            </div>
+            <h1 className="text-5xl md:text-7xl font-playfair font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight">
               Quote Scribe Reflect
             </h1>
           </div>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Transform any text into profound wisdom. Paste your article, thoughts, or stories, 
-            and discover the deeper meanings within through AI-generated reflections.
-          </p>
+          <div className="space-y-4">
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-inter font-light">
+              Transform any text into profound wisdom
+            </p>
+            <p className="text-lg text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed font-inter">
+              Paste your thoughts, articles, or stories and discover the deeper meanings within through AI-generated reflections
+            </p>
+          </div>
         </div>
 
         {/* Input Section */}
-        <Card className="mb-8 shadow-elegant border-border/50 bg-card/80 backdrop-blur-sm">
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="input-text" className="text-sm font-medium text-foreground">
+        <Card className="mb-12 shadow-luxury border-glass bg-gradient-card backdrop-blur-xl overflow-hidden relative group">
+          <div className="absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-100 transition-luxury"></div>
+          <CardContent className="p-8 relative z-10">
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <label htmlFor="input-text" className="text-base font-medium text-foreground font-inter">
                   Share your text
                 </label>
                 <Textarea
@@ -126,27 +134,27 @@ export function QuoteGenerator() {
                   placeholder="Paste your article, thoughts, journal entry, or any text you'd like to reflect upon..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  className="min-h-[200px] resize-none text-base leading-relaxed bg-background/50 border-border/50 focus:border-primary/50"
+                  className="min-h-[220px] resize-none text-base leading-relaxed bg-background/30 border-glass focus:border-white/30 focus:shadow-glow font-inter backdrop-blur-sm transition-luxury"
                   disabled={isLoading}
                 />
               </div>
               
-              <div className="flex gap-3 justify-center">
+              <div className="flex gap-4 justify-center pt-4">
                 <Button
                   variant="hero"
                   size="lg"
                   onClick={generateQuote}
                   disabled={isLoading || !inputText.trim()}
-                  className="min-w-[140px]"
+                  className="min-w-[160px] h-12 text-base font-inter"
                 >
                   {isLoading ? (
                     <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-5 w-5 animate-spin" />
                       Reflecting...
                     </>
                   ) : (
                     <>
-                      <Sparkles className="h-4 w-4" />
+                      <Sparkles className="h-5 w-5" />
                       Generate Quote
                     </>
                   )}
@@ -154,10 +162,11 @@ export function QuoteGenerator() {
                 
                 {(inputText || generatedQuote) && (
                   <Button
-                    variant="outline"
+                    variant="luxury"
                     size="lg"
                     onClick={clearAll}
                     disabled={isLoading}
+                    className="h-12 font-inter"
                   >
                     Clear All
                   </Button>
@@ -169,34 +178,44 @@ export function QuoteGenerator() {
 
         {/* Generated Quote Section */}
         {generatedQuote && (
-          <Card className="shadow-glow border-primary/20 bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-sm">
-            <CardContent className="p-8">
-              <div className="text-center space-y-4">
-                <Quote className="h-8 w-8 text-primary mx-auto opacity-60" />
-                <blockquote className="text-xl md:text-2xl font-medium leading-relaxed text-foreground italic">
+          <Card className="shadow-elegant border-glass bg-gradient-card backdrop-blur-xl relative overflow-hidden group animate-fade-in">
+            <div className="absolute inset-0 bg-gradient-primary opacity-5 group-hover:opacity-10 transition-luxury"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-primary rounded-full"></div>
+            <CardContent className="p-12 relative z-10">
+              <div className="text-center space-y-8">
+                <div className="relative inline-block">
+                  <Quote className="h-12 w-12 text-transparent bg-gradient-primary bg-clip-text mx-auto" />
+                  <div className="absolute inset-0 h-12 w-12 bg-gradient-primary opacity-20 blur-xl mx-auto"></div>
+                </div>
+                
+                <blockquote className="text-2xl md:text-3xl font-playfair font-medium leading-relaxed text-foreground italic max-w-4xl mx-auto">
                   "{generatedQuote}"
                 </blockquote>
-                <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent w-24 mx-auto"></div>
-                <div className="flex items-center justify-center gap-4 mt-4">
-                  <p className="text-sm text-muted-foreground">
+                
+                <div className="flex items-center justify-center">
+                  <div className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent w-48"></div>
+                </div>
+                
+                <div className="space-y-6">
+                  <p className="text-base text-muted-foreground/80 font-inter font-light">
                     Generated reflection from your text
                   </p>
-                  <div className="flex gap-2">
+                  <div className="flex gap-3 justify-center">
                     <Button
-                      variant="ghost"
+                      variant="luxury"
                       size="sm"
                       onClick={handleCopyQuote}
-                      className="text-primary hover:text-primary-foreground hover:bg-primary/20"
+                      className="font-inter transition-luxury hover:scale-105"
                     >
                       <Copy className="h-4 w-4" />
                       Copy Quote
                     </Button>
                     {user && (
                       <Button
-                        variant="ghost"
+                        variant="luxury"
                         size="sm"
                         onClick={handleSaveQuote}
-                        className="text-primary hover:text-primary-foreground hover:bg-primary/20"
+                        className="font-inter transition-luxury hover:scale-105"
                       >
                         <Save className="h-4 w-4" />
                         Save Quote
@@ -211,9 +230,9 @@ export function QuoteGenerator() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-border/50 bg-card/30 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6 text-center">
-          <p className="text-sm text-muted-foreground">
+      <footer className="border-t border-glass bg-gradient-card/50 backdrop-blur-xl">
+        <div className="container mx-auto px-4 py-8 text-center">
+          <p className="text-sm text-muted-foreground/80 font-inter font-light">
             Powered by AI • Transform your words into wisdom
           </p>
         </div>
