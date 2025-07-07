@@ -37,7 +37,7 @@ export function AppSidebar() {
   const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar className={isCollapsed ? "w-14" : "w-80"} collapsible="offcanvas">
+    <Sidebar collapsible="offcanvas">
       <SidebarHeader>
         {!isCollapsed && (
           <div className="flex items-center gap-2 px-2 py-2">
