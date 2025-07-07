@@ -65,6 +65,45 @@ All colors MUST be HSL.
 
     --radius: 0.75rem;
 
+    /* Typography tokens */
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-4xl: 2.25rem;
+    --font-size-5xl: 3rem;
+    --font-size-6xl: 3.75rem;
+    --font-size-7xl: 4.5rem;
+
+    /* Spacing tokens */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-3xl: 4rem;
+
+    /* Enhanced glass effects */
+    --glass-surface: hsl(48 8% 98% / 0.6);
+    --glass-surface-hover: hsl(48 8% 98% / 0.8);
+    --glass-border-light: hsl(45 85% 65% / 0.2);
+    --glass-border-strong: hsl(45 85% 65% / 0.5);
+    
+    /* Premium shadows */
+    --shadow-soft: 0 2px 8px hsl(240 10% 15% / 0.04);
+    --shadow-medium: 0 4px 16px hsl(240 10% 15% / 0.06);
+    --shadow-large: 0 8px 32px hsl(240 10% 15% / 0.08);
+    --shadow-xl: 0 16px 64px hsl(240 10% 15% / 0.1);
+    
+    /* Animation tokens */
+    --ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+
     /* Sidebar colors for off-white theme */
     --sidebar-background: 48 8% 98%;
     --sidebar-foreground: 240 10% 15%;

@@ -108,62 +108,67 @@ export function QuoteGenerator() {
   return (
     <div className="min-h-screen bg-gradient-subtle flex flex-col">
       {/* Hero Section */}
-      <div className="flex-1 container mx-auto px-4 py-8 max-w-4xl">
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-3 mb-6">
-            <div className="relative">
-              <Sparkles className="h-10 w-10 text-transparent bg-gradient-primary bg-clip-text" />
-              <div className="absolute inset-0 h-10 w-10 bg-gradient-primary opacity-20 blur-xl"></div>
+      <div className="flex-1 container mx-auto px-4 py-12 max-w-5xl">
+        <div className="text-center mb-20 animate-fade-in-up">
+          <div className="inline-flex items-center gap-4 mb-8">
+            <div className="relative animate-float">
+              <Sparkles className="h-12 w-12 text-transparent bg-gradient-primary bg-clip-text" />
+              <div className="absolute inset-0 h-12 w-12 bg-gradient-primary opacity-30 blur-xl animate-glow-pulse"></div>
             </div>
-            <h1 className="text-5xl md:text-7xl font-playfair font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight">
-              Quote Scribe Reflect
+            <h1 className="text-6xl md:text-8xl font-playfair font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight leading-none">
+              Quote Scribe
             </h1>
           </div>
-          <div className="space-y-4">
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed font-inter font-light">
+          <div className="space-y-6">
+            <p className="text-2xl md:text-3xl text-foreground/90 max-w-4xl mx-auto leading-relaxed font-inter font-light tracking-wide">
               Transform any text or image into profound wisdom
             </p>
-            <p className="text-lg text-muted-foreground/80 max-w-2xl mx-auto leading-relaxed font-inter">
+            <p className="text-xl text-muted-foreground/80 max-w-3xl mx-auto leading-relaxed font-inter font-light">
               Share your thoughts, upload photos, or paste articles to discover deeper meanings through AI-generated reflections
             </p>
           </div>
         </div>
 
         {/* Input Section */}
-        <Card className="mb-12 shadow-luxury border-glass bg-gradient-card backdrop-blur-xl overflow-hidden relative group">
-          <div className="absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-100 transition-luxury"></div>
-          <CardContent className="p-8 relative z-10">
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <label htmlFor="input-text" className="text-base font-medium text-foreground font-inter">
+        <Card variant="floating" className="mb-12 overflow-hidden relative group animate-fade-in-up">
+          <div className="absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
+          <CardContent className="p-10 relative z-10">
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <label htmlFor="input-text" className="text-lg font-semibold text-foreground font-inter tracking-wide">
                   Share your text
                 </label>
                 <Textarea
                   id="input-text"
+                  variant="glass"
                   placeholder="Share your thoughts, paste an article, or simply attach images to reflect upon..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  className="min-h-[220px] resize-none text-base leading-relaxed bg-background/30 border-glass focus:border-white/30 focus:shadow-glow font-inter backdrop-blur-sm transition-luxury"
+                  className="min-h-[200px] text-base leading-relaxed font-inter"
                   disabled={isLoading}
                 />
               </div>
               
-              <FileUpload
-                onFilesChange={setAttachedFiles}
-                files={attachedFiles}
-                disabled={isLoading}
-              />
+              <div className="transform hover:scale-[1.02] transition-all duration-300">
+                <FileUpload
+                  onFilesChange={setAttachedFiles}
+                  files={attachedFiles}
+                  disabled={isLoading}
+                />
+              </div>
               
-              <div className="space-y-3">
-                <label htmlFor="additional-directions" className="text-base font-medium text-foreground font-inter">
-                  Additional directions (optional)
+              <div className="space-y-4">
+                <label htmlFor="additional-directions" className="text-lg font-semibold text-foreground font-inter tracking-wide">
+                  Additional directions
+                  <span className="text-sm font-normal text-muted-foreground ml-2">(optional)</span>
                 </label>
                 <Textarea
                   id="additional-directions"
+                  variant="glass"
                   placeholder="Provide specific instructions for the AI (e.g., 'Make it humorous', 'Focus on hope', 'Use a philosophical tone')..."
                   value={additionalDirections}
                   onChange={(e) => setAdditionalDirections(e.target.value)}
-                  className="min-h-[100px] resize-none text-base leading-relaxed bg-background/30 border-glass focus:border-white/30 focus:shadow-glow font-inter backdrop-blur-sm transition-luxury"
+                  className="min-h-[100px] text-base leading-relaxed font-inter"
                   disabled={isLoading}
                 />
               </div>
@@ -207,46 +212,48 @@ export function QuoteGenerator() {
 
         {/* Generated Quote Section */}
         {generatedQuote && (
-          <Card className="shadow-elegant border-glass bg-gradient-card backdrop-blur-xl relative overflow-hidden group animate-fade-in">
-            <div className="absolute inset-0 bg-gradient-primary opacity-5 group-hover:opacity-10 transition-luxury"></div>
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-1 bg-gradient-primary rounded-full"></div>
-            <CardContent className="p-12 relative z-10">
-              <div className="text-center space-y-8">
-                <div className="relative inline-block">
-                  <Quote className="h-12 w-12 text-transparent bg-gradient-primary bg-clip-text mx-auto" />
-                  <div className="absolute inset-0 h-12 w-12 bg-gradient-primary opacity-20 blur-xl mx-auto"></div>
+          <Card variant="premium" className="relative overflow-hidden group animate-slide-in-from-bottom">
+            <div className="absolute inset-0 bg-gradient-primary opacity-5 group-hover:opacity-10 transition-all duration-700"></div>
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-1 bg-gradient-primary rounded-full shadow-glow"></div>
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-primary/10 rounded-full blur-3xl animate-float"></div>
+            <div className="absolute -bottom-20 -left-20 w-32 h-32 bg-gradient-primary/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
+            <CardContent className="p-16 relative z-10">
+              <div className="text-center space-y-10">
+                <div className="relative inline-block animate-glow-pulse">
+                  <Quote className="h-16 w-16 text-transparent bg-gradient-primary bg-clip-text mx-auto" />
+                  <div className="absolute inset-0 h-16 w-16 bg-gradient-primary opacity-20 blur-xl mx-auto"></div>
                 </div>
                 
-                <blockquote className="text-2xl md:text-3xl font-playfair font-medium leading-relaxed text-foreground italic max-w-4xl mx-auto">
+                <blockquote className="text-3xl md:text-4xl font-playfair font-medium leading-relaxed text-foreground italic max-w-4xl mx-auto tracking-wide">
                   "{generatedQuote}"
                 </blockquote>
                 
                 <div className="flex items-center justify-center">
-                  <div className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent w-48"></div>
+                  <div className="h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent w-64"></div>
                 </div>
                 
-                <div className="space-y-6">
-                  <p className="text-base text-muted-foreground/80 font-inter font-light">
+                <div className="space-y-8">
+                  <p className="text-lg text-muted-foreground/80 font-inter font-light tracking-wide">
                     Generated reflection from your content
                   </p>
-                  <div className="flex gap-3 justify-center">
+                  <div className="flex gap-4 justify-center">
                     <Button
                       variant="luxury"
-                      size="sm"
+                      size="lg"
                       onClick={handleCopyQuote}
-                      className="font-inter transition-luxury hover:scale-105"
+                      className="font-inter transition-all duration-300 hover:scale-105 hover:shadow-floating"
                     >
-                      <Copy className="h-4 w-4" />
+                      <Copy className="h-5 w-5" />
                       Copy Quote
                     </Button>
                     {user && (
                       <Button
                         variant="luxury"
-                        size="sm"
+                        size="lg"
                         onClick={handleSaveQuote}
-                        className="font-inter transition-luxury hover:scale-105"
+                        className="font-inter transition-all duration-300 hover:scale-105 hover:shadow-floating"
                       >
-                        <Save className="h-4 w-4" />
+                        <Save className="h-5 w-5" />
                         Save Quote
                       </Button>
                     )}
@@ -259,11 +266,17 @@ export function QuoteGenerator() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-glass bg-gradient-card/50 backdrop-blur-xl">
-        <div className="container mx-auto px-4 py-8 text-center">
-          <p className="text-sm text-muted-foreground/80 font-inter font-light">
-            Powered by AI • Transform your words into wisdom
-          </p>
+      <footer className="border-t border-glass-border bg-gradient-card/60 backdrop-blur-xl relative">
+        <div className="absolute inset-0 bg-gradient-accent/10"></div>
+        <div className="container mx-auto px-4 py-12 text-center relative z-10">
+          <div className="space-y-4">
+            <div className="flex items-center justify-center">
+              <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent w-32"></div>
+            </div>
+            <p className="text-base text-muted-foreground/80 font-inter font-light tracking-wide">
+              Powered by AI • Transform your words into wisdom
+            </p>
+          </div>
         </div>
       </footer>
     </div>
