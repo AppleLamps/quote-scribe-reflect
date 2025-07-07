@@ -8,107 +8,72 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Off-white theme with golden hints */
+    --background: 48 12% 96%;
+    --foreground: 240 10% 15%;
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 48 8% 98%;
+    --card-foreground: 240 10% 15%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 48 8% 98%;
+    --popover-foreground: 240 10% 15%;
 
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
+    --primary: 45 93% 47%;
+    --primary-foreground: 48 8% 98%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 45 20% 92%;
+    --secondary-foreground: 240 10% 15%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 45 15% 94%;
+    --muted-foreground: 240 8% 45%;
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 48 25% 88%;
+    --accent-foreground: 240 10% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 48 8% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 142.1 76.2% 36.3%;
+    --border: 45 15% 88%;
+    --input: 45 15% 92%;
+    --ring: 45 93% 47%;
 
-    /* Premium design tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(240 100% 70%), hsl(280 100% 75%), hsl(320 100% 70%));
-    --gradient-secondary: linear-gradient(135deg, hsl(220 100% 95%), hsl(240 100% 98%));
-    --gradient-subtle: linear-gradient(180deg, hsl(240 10% 4%), hsl(240 8% 8%));
-    --gradient-card: linear-gradient(145deg, hsl(240 10% 5%), hsl(240 8% 7%));
-    --gradient-accent: linear-gradient(90deg, hsl(240 100% 70% / 0.1), hsl(280 100% 75% / 0.1));
+    /* Glass and golden design tokens */
+    --gradient-primary: linear-gradient(135deg, 45deg 93% 47% / 0.9, 48deg 85% 55% / 0.8);
+    --gradient-secondary: linear-gradient(135deg, 48deg 25% 95%, 45deg 20% 92%);
+    --gradient-subtle: linear-gradient(180deg, 48deg 12% 96%, 48deg 8% 98%);
+    --gradient-card: linear-gradient(145deg, 48deg 8% 98% / 0.8, 45deg 15% 94% / 0.9);
+    --gradient-accent: linear-gradient(90deg, 45deg 93% 47% / 0.1, 48deg 85% 55% / 0.1);
     
-    --shadow-elegant: 0 20px 60px -15px hsl(240 100% 70% / 0.4);
-    --shadow-glow: 0 0 80px hsl(240 100% 70% / 0.2);
-    --shadow-luxury: 0 8px 32px hsl(240 8% 4% / 0.8), 0 2px 8px hsl(240 100% 70% / 0.1);
-    --shadow-premium: inset 0 1px 0 hsl(240 100% 95% / 0.1), 0 1px 3px hsl(240 8% 4% / 0.5);
+    /* Glass effects with golden hints */
+    --glass-background: 48deg 8% 98% / 0.7;
+    --glass-border: 45deg 85% 65% / 0.3;
+    --glass-hover: 45deg 93% 47% / 0.1;
     
-    --border-luxury: 1px solid hsl(240 100% 70% / 0.2);
-    --border-glass: 1px solid hsl(240 100% 95% / 0.1);
+    /* Floating shadows with golden glow */
+    --shadow-elegant: 0 20px 60px -15px 45deg 93% 47% / 0.4;
+    --shadow-glow: 0 0 80px 45deg 85% 55% / 0.3;
+    --shadow-luxury: 0 8px 32px 240deg 10% 15% / 0.1, 0 2px 8px 45deg 93% 47% / 0.2;
+    --shadow-premium: inset 0 1px 0 48deg 8% 98% / 0.8, 0 1px 3px 240deg 10% 15% / 0.1;
+    --shadow-floating: 0 25px 50px -12px 45deg 93% 47% / 0.25, 0 0 0 1px 45deg 85% 65% / 0.05;
+    
+    --border-luxury: 1px solid 45deg 85% 65% / 0.3;
+    --border-glass: 1px solid 48deg 8% 98% / 0.2;
     
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-luxury: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    --transition-float: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar colors for off-white theme */
+    --sidebar-background: 48 8% 98%;
+    --sidebar-foreground: 240 10% 15%;
+    --sidebar-primary: 45 93% 47%;
+    --sidebar-primary-foreground: 48 8% 98%;
+    --sidebar-accent: 45 20% 92%;
+    --sidebar-accent-foreground: 240 10% 15%;
+    --sidebar-border: 45 15% 88%;
+    --sidebar-ring: 45 93% 47%;
   }
 }
 
