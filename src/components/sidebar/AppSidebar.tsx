@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, BookOpen, Trash2, LogOut, User } from "lucide-react";
+import { Search, BookOpen, Trash2, LogOut, User, Quote as QuoteIcon, Sparkles } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card } from "@/components/ui/card";
 import { useQuotes, Quote } from "@/hooks/useQuotes";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -37,98 +38,132 @@ export function AppSidebar() {
   const isCollapsed = state === "collapsed";
 
   return (
-    <Sidebar collapsible="offcanvas">
-      <SidebarHeader>
+    <Sidebar collapsible="offcanvas" className="border-r border-glass-border bg-glass/30 backdrop-blur-xl">
+      <SidebarHeader className="p-6 border-b border-glass-border/50">
         {!isCollapsed && (
-          <div className="flex items-center gap-2 px-2 py-2">
-            <BookOpen className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-foreground">My Quotes</span>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-gradient-primary shadow-glow">
+              <Sparkles className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">My Quotes</h2>
+              <p className="text-xs text-muted-foreground">Inspiration Library</p>
+            </div>
           </div>
         )}
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="p-4 space-y-6">
         {!isCollapsed && (
-          <SidebarGroup>
-            <SidebarGroupLabel>Search</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <div className="px-2">
-                <div className="relative">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search quotes..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8 bg-background/50 border-border/50"
-                  />
-                </div>
-              </div>
-            </SidebarGroupContent>
-          </SidebarGroup>
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+              <Input
+                variant="glass"
+                placeholder="Search your quotes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 h-11 text-sm"
+              />
+            </div>
+          </div>
         )}
 
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            Saved Quotes ({filteredQuotes.length})
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <ScrollArea className="h-[400px] px-2">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between px-1">
+            <h3 className="text-sm font-medium text-foreground/80 flex items-center gap-2">
+              <QuoteIcon className="h-4 w-4" />
+              Saved Quotes
+            </h3>
+            <span className="text-xs text-muted-foreground bg-glass/50 px-2 py-1 rounded-full border border-glass-border">
+              {filteredQuotes.length}
+            </span>
+          </div>
+          
+          <ScrollArea className="h-[420px] -mx-1">
+            <div className="px-1 space-y-3">
               {loading ? (
-                <div className="text-sm text-muted-foreground p-2">
-                  Loading quotes...
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-pulse flex items-center gap-2 text-muted-foreground">
+                    <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
                 </div>
               ) : filteredQuotes.length === 0 ? (
-                <div className="text-sm text-muted-foreground p-2">
-                  {searchQuery ? "No quotes found." : "No saved quotes yet."}
-                </div>
+                <Card variant="glass" className="p-6 text-center">
+                  <QuoteIcon className="h-8 w-8 mx-auto mb-3 text-muted-foreground/50" />
+                  <p className="text-sm text-muted-foreground mb-1">
+                    {searchQuery ? "No quotes found" : "No quotes yet"}
+                  </p>
+                  <p className="text-xs text-muted-foreground/70">
+                    {searchQuery ? "Try a different search term" : "Generate your first quote to get started"}
+                  </p>
+                </Card>
               ) : (
-                <div className="space-y-2">
-                  {filteredQuotes.map((quote) => (
-                    <div
-                      key={quote.id}
-                      className="group relative p-3 rounded-md bg-card/50 border border-border/30 hover:bg-card/70 transition-colors"
-                    >
-                      <blockquote className="text-sm italic leading-relaxed text-foreground line-clamp-3">
+                filteredQuotes.map((quote) => (
+                  <Card
+                    key={quote.id}
+                    variant="glass"
+                    className="group relative p-4 hover:shadow-medium transition-all duration-300 hover:-translate-y-0.5"
+                  >
+                    <div className="space-y-3">
+                      <blockquote className="text-sm leading-relaxed text-foreground/90 line-clamp-4 font-medium">
                         "{quote.content}"
                       </blockquote>
-                      <div className="mt-2 text-xs text-muted-foreground">
-                        {new Date(quote.created_at).toLocaleDateString()}
+                      <div className="flex items-center justify-between">
+                        <time className="text-xs text-muted-foreground/70 font-medium">
+                          {new Date(quote.created_at).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </time>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="opacity-0 group-hover:opacity-100 transition-all duration-200 h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                          onClick={() => handleDeleteQuote(quote)}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity h-6 w-6 p-0"
-                        onClick={() => handleDeleteQuote(quote)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
                     </div>
-                  ))}
-                </div>
+                    
+                    {/* Subtle gradient overlay on hover */}
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none" />
+                  </Card>
+                ))
               )}
-            </ScrollArea>
-          </SidebarGroupContent>
-        </SidebarGroup>
+            </div>
+          </ScrollArea>
+        </div>
 
         {!isCollapsed && (
-          <SidebarGroup className="mt-auto">
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <div className="px-2 py-1 text-xs text-muted-foreground flex items-center gap-2">
-                    <User className="h-3 w-3" />
+          <div className="mt-auto pt-4 border-t border-glass-border/50 space-y-3">
+            <Card variant="glass" className="p-3">
+              <div className="flex items-center gap-3">
+                <div className="p-1.5 rounded-lg bg-gradient-accent">
+                  <User className="h-3.5 w-3.5 text-foreground/70" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-foreground/80 truncate">
                     {user?.email}
-                  </div>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton onClick={signOut} className="text-muted-foreground hover:text-foreground">
-                    <LogOut className="h-4 w-4" />
-                    Sign Out
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
+                  </p>
+                  <p className="text-xs text-muted-foreground/70">Premium User</p>
+                </div>
+              </div>
+            </Card>
+            
+            <Button
+              variant="ghost"
+              onClick={signOut}
+              className="w-full justify-start gap-3 h-10 text-muted-foreground/80 hover:text-foreground hover:bg-glass/50 transition-all duration-200"
+            >
+              <LogOut className="h-4 w-4" />
+              Sign Out
+            </Button>
+          </div>
         )}
       </SidebarContent>
     </Sidebar>
