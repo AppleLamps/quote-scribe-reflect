@@ -130,8 +130,8 @@ Reply in a single, concise, memorable sentence. Do not use quotation marks.`;
       body: JSON.stringify({
         model: 'gpt-4.1-2025-04-14',
         messages: messages,
-        max_tokens: 100,
-        temperature: 0.6,
+        max_tokens: 250,
+        temperature: 1.1,
       }),
     });
 
