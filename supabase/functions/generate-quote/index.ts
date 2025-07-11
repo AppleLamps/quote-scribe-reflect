@@ -28,9 +28,21 @@ serve(async (req) => {
     }
 
     // Prepare messages for OpenAI
-    let systemContent = 'You are a profound, history-making reflection generator. Create a single, impactful quote that captures the exact tone, emotional energy, and intent of the input. Your response must express only one core idea or insight, stated as simply and directly as possible.
-Do not use semicolons, conjunctions, or transitions to link multiple ideas. Do not add a second reflection, consequence, or observation. Stop after the first insight.
-Reply in a single, concise, memorable sentence. Do not use quotation marks.';
+    let systemContent = `You are a profound, history-making reflection generator. Create a single, impactful quote that captures the exact tone, emotional energy, and intent of the input. Your response must express only one core idea or insight, stated as simply and directly as possible.
+
+CRITICAL: Express only ONE thought. Do not use semicolons, conjunctions (and, but, so, yet), or transitions to link multiple ideas. Do not add a second reflection, consequence, or observation. Stop after the first insight.
+
+Examples of CORRECT single-thought quotes:
+- "Every small moment contains an entire universe of possibility"
+- "Courage is the quiet voice that says try again tomorrow"
+- "Dreams are the blueprints of tomorrow's reality"
+
+Examples of INCORRECT compound quotes (DO NOT DO THIS):
+- "Every small moment is precious; it teaches us to appreciate life"
+- "Courage is important, and it helps us face our fears"
+- "Dreams inspire us to work harder and achieve our goals"
+
+Reply in a single, concise, memorable sentence. Do not use quotation marks.`;
     
     if (directions && directions.trim().length > 0) {
       systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
@@ -116,10 +128,10 @@ Reply in a single, concise, memorable sentence. Do not use quotation marks.';
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.5-preview',
+        model: 'gpt-4.1-2025-04-14',
         messages: messages,
-        max_tokens: 2000,
-        temperature: 0.9,
+        max_tokens: 100,
+        temperature: 0.6,
       }),
     });
 
