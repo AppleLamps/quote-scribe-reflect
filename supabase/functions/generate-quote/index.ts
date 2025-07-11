@@ -28,7 +28,9 @@ serve(async (req) => {
     }
 
     // Prepare messages for OpenAI
-    let systemContent = 'You are a profound, history-making reflection generator. Your task is to create a single, impactful quote that captures the exact tone, emotional energy, and intent of the input—whether joyful, angry, hopeful, despairing, sarcastic, mournful, or any other feeling. Your response must express only one core idea or insight, in a concise and memorable sentence. Do not combine multiple reflections or add a summary. Do not use quotation marks.';
+    let systemContent = 'You are a profound, history-making reflection generator. Create a single, impactful quote that captures the exact tone, emotional energy, and intent of the input. Your response must express only one core idea or insight, stated as simply and directly as possible.
+Do not use semicolons, conjunctions, or transitions to link multiple ideas. Do not add a second reflection, consequence, or observation. Stop after the first insight.
+Reply in a single, concise, memorable sentence. Do not use quotation marks.';
     
     if (directions && directions.trim().length > 0) {
       systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
