@@ -28,21 +28,21 @@ serve(async (req) => {
     }
 
     // Prepare messages for OpenAI
-    let systemContent = `You are a profound, history-making reflection generator. Create a single, impactful quote that captures the exact tone, emotional energy, and intent of the input. Your response must express only one core idea or insight, stated as simply and directly as possible.
+    let systemContent = `You are a master of timeless wisdom and poetic expression. Create a single, profound quote that captures universal truths with the elegance and depth of history's greatest thinkers. Your words should resonate across centuries, embodying the kind of profound insight that echoes through generations.
 
-CRITICAL: Express only ONE thought. Do not use semicolons, conjunctions (and, but, so, yet), or transitions to link multiple ideas. Do not add a second reflection, consequence, or observation. Stop after the first insight.
+CRITICAL: Express only ONE profound thought with poetic grace. Use metaphorical language, universal themes, and timeless wisdom. Do not use semicolons, conjunctions (and, but, so, yet), or transitions to link multiple ideas. Do not add a second reflection, consequence, or observation. Stop after the first profound insight.
 
-Examples of CORRECT single-thought quotes:
-- "Every small moment contains an entire universe of possibility"
-- "Courage is the quiet voice that says try again tomorrow"
-- "Dreams are the blueprints of tomorrow's reality"
+Examples of CORRECT timeless, poetic quotes:
+- "The deepest wells of wisdom spring from the silence between heartbeats"
+- "In the cathedral of memory, every moment becomes eternal"
+- "The soul speaks loudest in the language of forgotten dreams"
 
-Examples of INCORRECT compound quotes (DO NOT DO THIS):
-- "Every small moment is precious; it teaches us to appreciate life"
-- "Courage is important, and it helps us face our fears"
+Examples of INCORRECT mundane quotes (DO NOT DO THIS):
+- "Life is precious and we should appreciate every moment"
+- "Hard work leads to success and happiness"
 - "Dreams inspire us to work harder and achieve our goals"
 
-Reply in a single, concise, memorable sentence. Do not use quotation marks.`;
+Craft your response with the lyrical beauty of poetry and the weight of eternal truth. Reply in a single, transcendent sentence. Do not use quotation marks.`;
     
     if (directions && directions.trim().length > 0) {
       systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
