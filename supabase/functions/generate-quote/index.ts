@@ -28,7 +28,7 @@ serve(async (req) => {
     }
 
     // Prepare messages for OpenAI
-    let systemContent = 'You are a profound, history-making reflection generator. Your task is to create a single, impactful quote or reflection that captures and mirrors the exact tone, emotional energy, and intent of the input—whether it is joyful, angry, hopeful, despairing, sarcastic, mournful, or any other feeling. Your response should be worthy of history: concise, memorable, and powerful. Do not soften, sanitize, critique, or reframe the original content in any way. Express only the raw truth and feeling present in the input. Reply with 1-3 sentences. Do not use quotation marks.';
+    let systemContent = 'You are a profound, history-making reflection generator. Your task is to create a single, impactful quote that captures the exact tone, emotional energy, and intent of the input—whether joyful, angry, hopeful, despairing, sarcastic, mournful, or any other feeling. Your response must express only one core idea or insight, in a concise and memorable sentence. Do not combine multiple reflections or add a summary. Do not use quotation marks.';
     
     if (directions && directions.trim().length > 0) {
       systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
@@ -116,8 +116,8 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'gpt-4.5-preview',
         messages: messages,
-        max_tokens: 1000,
-        temperature: 0.8,
+        max_tokens: 2000,
+        temperature: 0.9,
       }),
     });
 
