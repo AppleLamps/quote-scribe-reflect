@@ -264,21 +264,30 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          email: string | null
+          full_name: string | null
           id: string
+          subscription_tier: string | null
           updated_at: string
           username: string | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
+          full_name?: string | null
           id: string
+          subscription_tier?: string | null
           updated_at?: string
           username?: string | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
+          full_name?: string | null
           id?: string
+          subscription_tier?: string | null
           updated_at?: string
           username?: string | null
         }
@@ -344,6 +353,120 @@ export type Database = {
         }
         Relationships: []
       }
+      transcription_jobs: {
+        Row: {
+          created_at: string
+          duration_seconds: number | null
+          enable_speaker_detection: boolean | null
+          enhanced_transcript_text: string | null
+          enhancement_completed_at: string | null
+          enhancement_error_message: string | null
+          enhancement_status: string | null
+          error_message: string | null
+          file_path: string
+          file_size_bytes: number
+          file_type: Database["public"]["Enums"]["file_type"]
+          id: string
+          language: string | null
+          original_filename: string
+          processing_completed_at: string | null
+          processing_started_at: string | null
+          speaker_count: number | null
+          speaker_labels: Json | null
+          status: Database["public"]["Enums"]["transcription_status"]
+          title: string
+          transcript_file_path: string | null
+          transcript_text: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          duration_seconds?: number | null
+          enable_speaker_detection?: boolean | null
+          enhanced_transcript_text?: string | null
+          enhancement_completed_at?: string | null
+          enhancement_error_message?: string | null
+          enhancement_status?: string | null
+          error_message?: string | null
+          file_path: string
+          file_size_bytes: number
+          file_type: Database["public"]["Enums"]["file_type"]
+          id?: string
+          language?: string | null
+          original_filename: string
+          processing_completed_at?: string | null
+          processing_started_at?: string | null
+          speaker_count?: number | null
+          speaker_labels?: Json | null
+          status?: Database["public"]["Enums"]["transcription_status"]
+          title: string
+          transcript_file_path?: string | null
+          transcript_text?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          duration_seconds?: number | null
+          enable_speaker_detection?: boolean | null
+          enhanced_transcript_text?: string | null
+          enhancement_completed_at?: string | null
+          enhancement_error_message?: string | null
+          enhancement_status?: string | null
+          error_message?: string | null
+          file_path?: string
+          file_size_bytes?: number
+          file_type?: Database["public"]["Enums"]["file_type"]
+          id?: string
+          language?: string | null
+          original_filename?: string
+          processing_completed_at?: string | null
+          processing_started_at?: string | null
+          speaker_count?: number | null
+          speaker_labels?: Json | null
+          status?: Database["public"]["Enums"]["transcription_status"]
+          title?: string
+          transcript_file_path?: string | null
+          transcript_text?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_settings: {
+        Row: {
+          auto_download: boolean | null
+          created_at: string
+          default_language: string | null
+          email_notifications: boolean | null
+          id: string
+          max_file_size_mb: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_download?: boolean | null
+          created_at?: string
+          default_language?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          max_file_size_mb?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_download?: boolean | null
+          created_at?: string
+          default_language?: string | null
+          email_notifications?: boolean | null
+          id?: string
+          max_file_size_mb?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -368,7 +491,13 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      file_type: "audio" | "video"
+      transcription_status:
+        | "pending"
+        | "processing"
+        | "completed"
+        | "failed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -495,6 +624,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      file_type: ["audio", "video"],
+      transcription_status: [
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "cancelled",
+      ],
+    },
   },
 } as const
