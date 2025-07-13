@@ -34,6 +34,8 @@ Draw from the wellspring of human experience to craft thoughts that resonate acr
 
 Create profound reflections that illuminate the human condition with metaphorical richness and universal resonance. Let your words breathe with the rhythm of timeless truth, speaking to the soul's deepest yearnings and highest aspirations.
 
+CRITICAL: Keep your response under 280 characters while maintaining profound depth and poetic beauty.
+
 Reply with wisdom that could stand alongside history's most memorable insights. Do not use quotation marks.`;
     
     if (directions && directions.trim().length > 0) {
