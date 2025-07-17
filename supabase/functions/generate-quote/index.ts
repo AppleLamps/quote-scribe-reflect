@@ -9,15 +9,23 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  console.log('Edge function called, method:', req.method);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('Handling CORS preflight');
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    console.log('Processing request...');
+    
     if (!openAIApiKey) {
+      console.error('OpenAI API key not configured');
       throw new Error('OpenAI API key not configured');
     }
+    
+    console.log('OpenAI API key found, length:', openAIApiKey.length);
 
     const { text, files, directions } = await req.json();
 
