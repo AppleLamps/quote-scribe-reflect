@@ -130,9 +130,9 @@ Reply with wisdom that could stand alongside history's most memorable insights. 
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
+        model: 'gpt-4.5-preview',
         messages: messages,
-        max_tokens: 250,
+        max_tokens: 500,
         temperature: 1.1,
       }),
     });
