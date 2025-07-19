@@ -139,7 +139,7 @@ CRITICAL: Keep under 280 characters. Vary your vocabulary, imagery, and tone dra
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.5-preview',
+        model: 'gpt-4o',
         messages: messages,
         max_tokens: 500,
         temperature: 1.1,
