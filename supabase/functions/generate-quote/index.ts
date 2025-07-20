@@ -35,26 +35,36 @@ serve(async (req) => {
       }
     }
 
-    // Prepare messages for OpenAI
-    let systemContent = `You are a master of human insight, drawing from the full spectrum of wisdom traditions, life experiences, and philosophical perspectives. Create profound reflections that illuminate truth through fresh, unexpected angles.
+    // Updated system prompt
+    let systemContent = `You are a quote generator that transforms user input into a short, potent reflection (≤280 characters) that expresses the core message of the original text—clearly, freshly, and in a distinct voice.
 
-Vary your approach dramatically:
-- Sometimes be direct and stark like Hemingway
-- Sometimes playful and paradoxical like Zen koans  
-- Sometimes scientific and precise like Carl Sagan
-- Sometimes intimate and personal like Maya Angelou
-- Sometimes bold and defiant like Nietzsche
-- Sometimes gentle and observational like Jane Austen
+Your output must:
+- Reflect the meaning or moral of the input, even if it rephrases or reimagines it.
+- Use only one metaphor or image (if any).
+- Be complete in thought and emotionally unified—no stacking of semi-related ideas.
 
-Avoid overused metaphors (stars, storms, dawn, weaving, journeys, rivers, seeds, mirrors). Instead, find wisdom in:
-- Everyday moments and mundane objects
-- Specific, concrete details rather than abstract concepts
-- Unexpected connections and fresh comparisons
-- Different emotional tones: humor, curiosity, defiance, tenderness
-- Various perspectives: child-like wonder, elderly reflection, scientific observation
+Tonal variation is essential. Rotate unpredictably across styles:
+- Direct & stark (like Hemingway)
+- Playful & paradoxical (like Zen koans)
+- Cosmic & precise (like Carl Sagan)
+- Tender & intimate (like Maya Angelou)
+- Witty & observant (like Jane Austen)
+- Bold & challenging (like Nietzsche)
 
-CRITICAL: Keep under 280 characters. Vary your vocabulary, imagery, and tone dramatically between responses. Make each quote feel completely distinct in voice and perspective. Do not use quotation marks.`;
-    
+DO:
+- Ground ideas in small, concrete details or objects
+- Match the emotional resonance of the input: is it regretful, hopeful, ironic, bitter?
+- Vary syntax, diction, and rhythm between responses
+- Leave a hint of mystery, wit, or sting
+
+DO NOT:
+- Stack metaphors or dual insights
+- Use quotation marks
+- Repeat stock imagery (no stars, rivers, storms, journeys, mirrors, seeds, dawn, etc.)
+- Produce generic, flowery, or abstract AI-sounding lines
+
+Your goal: One striking line that captures the truth behind the user’s words—refined, not inflated.`;
+
     if (directions && directions.trim().length > 0) {
       systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
     }
@@ -84,7 +94,6 @@ CRITICAL: Keep under 280 characters. Vary your vocabulary, imagery, and tone dra
       for (const file of files) {
         try {
           if (file.type.startsWith('image/')) {
-            // For images, add them directly to the vision model
             userMessageContent.push({
               type: 'image_url',
               image_url: {
@@ -93,7 +102,6 @@ CRITICAL: Keep under 280 characters. Vary your vocabulary, imagery, and tone dra
               }
             });
           } else if (file.type === 'text/plain' || file.type === 'text/markdown') {
-            // For text files, fetch and include content
             const fileResponse = await fetch(file.url);
             if (fileResponse.ok) {
               const fileContent = await fileResponse.text();
@@ -103,7 +111,6 @@ CRITICAL: Keep under 280 characters. Vary your vocabulary, imagery, and tone dra
               });
             }
           } else {
-            // For other file types, just mention them
             userMessageContent.push({
               type: 'text',
               text: `[File attached: ${file.name}]`
@@ -119,7 +126,6 @@ CRITICAL: Keep under 280 characters. Vary your vocabulary, imagery, and tone dra
       }
     }
 
-    // If no content was added, add a default message
     if (userMessageContent.length === 0) {
       userMessageContent.push({
         type: 'text',
