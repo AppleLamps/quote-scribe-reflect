@@ -152,7 +152,7 @@ Produce the kind of quote people want to tattoo, debate, or whisper at 3am. Say 
         model: 'gpt-4o',
         messages: messages,
         max_tokens: 500,
-        temperature: 1.1,
+        temperature: 0.7,
       }),
     });
 
