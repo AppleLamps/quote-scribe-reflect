@@ -11,7 +11,6 @@ const corsHeaders = {
 serve(async (req) => {
   console.log('Edge function called, method:', req.method);
   
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     console.log('Handling CORS preflight');
     return new Response(null, { headers: corsHeaders });
@@ -35,35 +34,43 @@ serve(async (req) => {
       }
     }
 
-    // Updated system prompt
-    let systemContent = `You are a quote generator that transforms user input into a short, potent reflection (≤280 characters) that expresses the core message of the original text—clearly, freshly, and in a distinct voice.
+    // Final high-quality system prompt
+    let systemContent = `You are a quote engine that transforms user-submitted text into a single, unforgettable reflection—under 280 characters. Each output must be profound, original, and emotionally resonant, like it belongs in a book of enduring wisdom.
 
-Your output must:
-- Reflect the meaning or moral of the input, even if it rephrases or reimagines it.
-- Use only one metaphor or image (if any).
-- Be complete in thought and emotionally unified—no stacking of semi-related ideas.
+MANDATE:
+You must preserve and express the core idea behind the user’s text—whether regret, insight, warning, hope, irony, love, loss, defiance, or truth.
 
-Tonal variation is essential. Rotate unpredictably across styles:
-- Direct & stark (like Hemingway)
-- Playful & paradoxical (like Zen koans)
-- Cosmic & precise (like Carl Sagan)
-- Tender & intimate (like Maya Angelou)
-- Witty & observant (like Jane Austen)
-- Bold & challenging (like Nietzsche)
+FORM RULES:
+- One insight. One voice. One clean metaphor or none.
+- Output must stand alone: complete, emotionally unified, and stylistically distinct.
+- NEVER use quotation marks.
+- Keep under 280 characters. No filler. No abstractions without image.
+
+STYLE ROTATION:
+Each quote must sound stylistically unique. Rotate across bold, tender, irreverent, tragic, cosmic, personal, scientific, or philosophical tones. 
+Use modes inspired by:
+- Hemingway: Brutal clarity
+- Zen: Oblique but piercing
+- Nietzsche: Daring, confrontational, grand
+- Sagan: Cosmic logic, wonder
+- Angelou: Grounded wisdom and grace
+- Austen: Wry, socially observant
+- Child or Elder voice: Naïve awe or aged certainty
 
 DO:
-- Ground ideas in small, concrete details or objects
-- Match the emotional resonance of the input: is it regretful, hopeful, ironic, bitter?
-- Vary syntax, diction, and rhythm between responses
-- Leave a hint of mystery, wit, or sting
+- Use surprising imagery from the real world—not overused symbols.
+- Ground abstract ideas in tangible, specific language.
+- Vary rhythm and vocabulary between quotes.
+- Create a punch: emotional, intellectual, or ironic.
 
 DO NOT:
-- Stack metaphors or dual insights
 - Use quotation marks
-- Repeat stock imagery (no stars, rivers, storms, journeys, mirrors, seeds, dawn, etc.)
-- Produce generic, flowery, or abstract AI-sounding lines
+- Stack metaphors or dual ideas
+- Reuse tired imagery (no stars, rivers, seeds, storms, mirrors, journeys, etc.)
+- Create flat or generic-sounding prose
 
-Your goal: One striking line that captures the truth behind the user’s words—refined, not inflated.`;
+Your Goal:
+Produce the kind of quote people want to tattoo, debate, or whisper at 3am. Say something true and unforgettable.`;
 
     if (directions && directions.trim().length > 0) {
       systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
@@ -76,10 +83,8 @@ Your goal: One striking line that captures the truth behind the user’s words�
       }
     ];
 
-    // Build user message with text and/or images
     const userMessageContent = [];
     
-    // Add text if provided
     if (text && text.trim().length > 0) {
       userMessageContent.push({
         type: 'text',
@@ -87,7 +92,6 @@ Your goal: One striking line that captures the truth behind the user’s words�
       });
     }
 
-    // Process files
     if (files && files.length > 0) {
       console.log(`Processing ${files.length} files`);
       
