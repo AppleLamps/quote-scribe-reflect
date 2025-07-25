@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Search, BookOpen, Trash2, LogOut, User, Quote as QuoteIcon, Sparkles } from "lucide-react";
+import { Search, BookOpen, Trash2, LogOut, User, Quote as QuoteIcon, Sparkles, Wand2 } from "lucide-react";
+import { Link } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -67,6 +68,30 @@ export function AppSidebar() {
                   className="pl-10 h-11 text-sm"
                 />
               </div>
+            </div>
+          )}
+
+          {/* Navigation */}
+          {!isCollapsed && (
+            <div className="space-y-2">
+              <Link to="/">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 h-10 text-foreground/80 hover:text-foreground hover:bg-glass/50 transition-all duration-200"
+                >
+                  <QuoteIcon className="h-4 w-4" />
+                  Quote Generator
+                </Button>
+              </Link>
+              <Link to="/flux">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 h-10 text-foreground/80 hover:text-foreground hover:bg-glass/50 transition-all duration-200"
+                >
+                  <Wand2 className="h-4 w-4" />
+                  Flux Prompt Generator
+                </Button>
+              </Link>
             </div>
           )}
 
