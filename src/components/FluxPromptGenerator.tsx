@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Sparkles, Copy, Save } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useSettings } from "@/hooks/useSettings";
 
 export function FluxPromptGenerator() {
   const [inputText, setInputText] = useState("");
@@ -14,6 +15,7 @@ export function FluxPromptGenerator() {
   const [additionalDirections, setAdditionalDirections] = useState("");
   const { toast } = useToast();
   const { user } = useAuth();
+  const { settings } = useSettings();
 
   const generatePrompt = async () => {
     if (!inputText.trim()) {
@@ -28,9 +30,11 @@ export function FluxPromptGenerator() {
     setIsLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-flux-prompt', {
-        body: { 
+        body: {
           text: inputText.trim(),
-          directions: additionalDirections.trim() || undefined
+          directions: additionalDirections.trim() || undefined,
+          model: settings.model,
+          systemPrompt: settings.systemPrompt,
         }
       });
 
@@ -127,7 +131,7 @@ export function FluxPromptGenerator() {
                   disabled={isLoading}
                 />
               </div>
-              
+
               <div className="space-y-4">
                 <label htmlFor="additional-directions" className="text-lg font-semibold text-foreground font-inter tracking-wide">
                   Additional directions
@@ -143,7 +147,7 @@ export function FluxPromptGenerator() {
                   disabled={isLoading}
                 />
               </div>
-              
+
               <div className="flex gap-4 justify-center pt-4">
                 <Button
                   variant="hero"
@@ -164,7 +168,7 @@ export function FluxPromptGenerator() {
                     </>
                   )}
                 </Button>
-                
+
                 {(inputText || generatedPrompt || additionalDirections) && (
                   <Button
                     variant="luxury"
@@ -194,17 +198,17 @@ export function FluxPromptGenerator() {
                   <Sparkles className="h-16 w-16 text-transparent bg-gradient-primary bg-clip-text mx-auto" />
                   <div className="absolute inset-0 h-16 w-16 bg-gradient-primary opacity-20 blur-xl mx-auto"></div>
                 </div>
-                
+
                 <div className="text-left max-w-4xl mx-auto">
                   <pre className="text-lg md:text-xl font-mono leading-relaxed text-foreground whitespace-pre-wrap font-inter">
                     {generatedPrompt}
                   </pre>
                 </div>
-                
+
                 <div className="flex items-center justify-center">
                   <div className="h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent w-64"></div>
                 </div>
-                
+
                 <div className="space-y-8">
                   <p className="text-lg text-muted-foreground/80 font-inter font-light tracking-wide">
                     Generated Flux prompt from your idea

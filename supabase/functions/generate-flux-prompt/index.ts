@@ -25,14 +25,14 @@ serve(async (req)=>{
 
     console.log('OpenAI API key found, length:', openAIApiKey.length);
 
-    const { text, directions } = await req.json();
+    const { text, directions, model, systemPrompt } = await req.json();
 
     if (!text || text.trim().length === 0) {
       throw new Error('Text content is required');
     }
 
     // System prompt for generating Flux image prompts
-    let systemContent = `You are an expert prompt engineer for image generation models. Your task is to convert a user's idea into a single, comprehensive, and descriptive narrative prompt.
+    let systemContent = systemPrompt || `You are an expert prompt engineer for image generation models. Your task is to convert a user's idea into a single, comprehensive, and descriptive narrative prompt.
 
 MANDATE:
 - You MUST ALWAYS generate a prompt from the user's input.
@@ -79,7 +79,7 @@ Your output should be ONLY the generated prompt text.`;
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4.1',
+        model: model || 'gpt-4.1',
         messages: messages,
         max_tokens: 1500,
         temperature: 0.6

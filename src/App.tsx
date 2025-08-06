@@ -7,6 +7,7 @@ import { SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sid
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { AuthPage } from "@/components/auth/AuthPage";
 import { useAuth } from "@/hooks/useAuth";
+import { SettingsProvider } from "@/hooks/useSettings";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Index from "./pages/Index";
 import FluxPrompt from "./pages/FluxPrompt";
@@ -78,7 +79,9 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <AppContent />
+        <SettingsProvider>
+          <AppContent />
+        </SettingsProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
