@@ -13,6 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { useSettings } from '@/hooks/useSettings';
 import { useToast } from '@/hooks/use-toast';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 
 interface SettingsDialogProps {
   open: boolean;
@@ -39,39 +40,85 @@ export function SettingsDialog({ open, onOpenChange }: SettingsDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[625px]">
+      <DialogContent className="sm:max-w-[720px]">
         <DialogHeader>
           <DialogTitle>Override Settings</DialogTitle>
           <DialogDescription>
-            Here you can override the default system instructions and AI model.
+            Customize the AI model and system prompts for both generators.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="model-name">Model Name</Label>
-            <Input
-              id="model-name"
-              value={localSettings.model}
-              onChange={(e) =>
-                setLocalSettings({ ...localSettings, model: e.target.value })
-              }
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="system-prompt">System Prompt</Label>
-            <Textarea
-              id="system-prompt"
-              value={localSettings.systemPrompt}
-              onChange={(e) =>
-                setLocalSettings({
-                  ...localSettings,
-                  systemPrompt: e.target.value,
-                })
-              }
-              className="min-h-[250px]"
-            />
-          </div>
-        </div>
+
+        <Tabs defaultValue="image" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="image">Image Generator</TabsTrigger>
+            <TabsTrigger value="quote">Quote Generator</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="image">
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="image-model-name">Model Name</Label>
+                <Input
+                  id="image-model-name"
+                  value={localSettings.image.model}
+                  onChange={(e) =>
+                    setLocalSettings({
+                      ...localSettings,
+                      image: { ...localSettings.image, model: e.target.value },
+                    })
+                  }
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="image-system-prompt">System Prompt</Label>
+                <Textarea
+                  id="image-system-prompt"
+                  value={localSettings.image.systemPrompt}
+                  onChange={(e) =>
+                    setLocalSettings({
+                      ...localSettings,
+                      image: { ...localSettings.image, systemPrompt: e.target.value },
+                    })
+                  }
+                  className="min-h-[250px]"
+                />
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="quote">
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="quote-model-name">Model Name</Label>
+                <Input
+                  id="quote-model-name"
+                  value={localSettings.quote.model}
+                  onChange={(e) =>
+                    setLocalSettings({
+                      ...localSettings,
+                      quote: { ...localSettings.quote, model: e.target.value },
+                    })
+                  }
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="quote-system-prompt">System Prompt</Label>
+                <Textarea
+                  id="quote-system-prompt"
+                  value={localSettings.quote.systemPrompt}
+                  onChange={(e) =>
+                    setLocalSettings({
+                      ...localSettings,
+                      quote: { ...localSettings.quote, systemPrompt: e.target.value },
+                    })
+                  }
+                  className="min-h-[250px]"
+                />
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
+
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             Cancel

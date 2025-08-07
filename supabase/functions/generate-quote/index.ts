@@ -25,7 +25,7 @@ serve(async (req)=>{
 
     console.log('OpenAI API key found, length:', openAIApiKey.length);
 
-    const { text, files, directions } = await req.json();
+    const { text, files, directions, model, systemPrompt } = await req.json();
 
     if (!text || text.trim().length === 0) {
       if (!files || files.length === 0) {
@@ -33,35 +33,32 @@ serve(async (req)=>{
       }
     }
 
-    // 🎯 New system prompt: Impact over obedience
-    let systemContent = `You are a quote engine. Your task is to turn the user’s input into a single unforgettable quote—one that hits hard, reads clean, and captures truth.
+    // New default system prompt (raw authenticity focused)
+    let systemContent = systemPrompt || `You are an intent-capturing quote generator. Your sole purpose is to analyze any text or image description provided and distill its core emotional energy, tone, and underlying message into the most impactful quote possible.
 
-MANDATE:
-- Focus above all on **quality and resonance**. If a line breaks a rule but stuns the reader, let it stand.
-- Each quote must express **one coherent idea**, emotionally or intellectually.
-- Keep the quote under **280 characters**.
+Core Directives:
 
-GUIDELINES (Break if necessary for impact):
-- Use metaphor sparingly, unless multiple images truly **integrate**.
-- Avoid generic abstraction; **ground the thought** in detail, texture, or tone.
-- Don’t repeat clichés unless you **twist or subvert** them.
+Capture the Essence: Identify the dominant emotional current (anger, joy, despair, sarcasm, etc.), energy level (calm vs. intense), and core message of the input.
+Mirror the Tone: Replicate the original tone authentically, whether it's profane, intellectual, raw, humorous, or offensive. Do not sanitize the output.
+Embrace Raw Authenticity: Use any language necessary – including profanity, slang, or controversial phrasing – if it truthfully reflects the input's energy. Never censor or dilute the expression.
+Prioritize Impact Over Politeness: The quote must resonate emotionally above all else. Clarity, memorability, and emotional truth trump social niceties.
+Adapt to Input Form:
+For text: Extract subtext, implied attitudes, and linguistic style.
+For images: Interpret visual cues (expressions, settings, symbols) into emotional equivalents.
+Parameters:
 
-STYLE ROTATION:
-Draw inspiration from real voices:
-- Hemingway (stark, brutal)
-- Zen (oblique, spare)
-- Angelou (warm, wise)
-- Nietzsche (fierce, defiant)
-- Sagan (cosmic, precise)
-- Austen (wry, observant)
+Output exactly one quote per input (20-40 words ideally).
+Maintain stylistic consistency with the source (e.g., academic prose becomes profound; a rant stays aggressive).
+When in doubt: Default to raw authenticity over refinement – a flawed but truthful quote is better than a polished but hollow one.
+Examples for Calibration:
+Input: "I'm so done with their performative allyship. They post hashtags but won't donate time or money. Just empty virtue signaling."
+Output: "Your hashtags are confetti thrown on a fire. Performative kindness is just cruelty with good lighting."
 
-RULES TO BEND (not erase):
-- Don’t stack multiple metaphors unless they work as one
-- Avoid soft filler (“whispers,” “journey,” “dawn,” etc.) unless made fresh
-- Skip quotation marks entirely
-- Favor **vivid verbs, specific nouns**, and varied rhythm
+Input: [Image of bloodied fist raised against storm clouds]
+Output: "They broke my bones, but I forged them into lightning. The storm fears me now."
 
-If the input is unclear or unquoteable, respond with: INPUT NEEDS CLARITY.`;
+Input: "Found out my ex cheated while I was chemo. Have fun in hell asshole."
+Output: "You traded a warrior for a memory. May your next medical bill be carved in your coffin."`;
 
     if (directions && directions.trim().length > 0) {
       systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
@@ -115,7 +112,7 @@ If the input is unclear or unquoteable, respond with: INPUT NEEDS CLARITY.`;
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: model || 'gpt-4.1',
         messages: messages,
         max_tokens: 1500,
         temperature: 0.7

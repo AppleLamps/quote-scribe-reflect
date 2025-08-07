@@ -8,6 +8,7 @@ import { Loader2, Sparkles, Quote, Save, Copy } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuotes } from "@/hooks/useQuotes";
 import { FileUpload, UploadedFile } from "@/components/FileUpload";
+import { useSettings } from "@/hooks/useSettings";
 
 export function QuoteGenerator() {
   const [inputText, setInputText] = useState("");
@@ -18,6 +19,7 @@ export function QuoteGenerator() {
   const { toast } = useToast();
   const { user } = useAuth();
   const { saveQuote } = useQuotes(user?.id);
+  const { settings } = useSettings();
 
   const generateQuote = async () => {
     if (!inputText.trim() && attachedFiles.length === 0) {
@@ -35,7 +37,9 @@ export function QuoteGenerator() {
         body: { 
           text: inputText.trim(), 
           files: attachedFiles,
-          directions: additionalDirections.trim() || undefined
+          directions: additionalDirections.trim() || undefined,
+          model: settings.quote.model,
+          systemPrompt: settings.quote.systemPrompt,
         }
       });
 

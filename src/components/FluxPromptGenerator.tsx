@@ -33,8 +33,8 @@ export function FluxPromptGenerator() {
         body: {
           text: inputText.trim(),
           directions: additionalDirections.trim() || undefined,
-          model: settings.model,
-          systemPrompt: settings.systemPrompt,
+          model: settings.image.model,
+          systemPrompt: settings.image.systemPrompt,
         }
       });
 
