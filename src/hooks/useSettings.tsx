@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // Default prompts
-const DEFAULT_QUOTE_SYSTEM_PROMPT = `You are an intent-capturing quote generator. Your sole purpose is to analyze any text or image description provided and distill its core emotional energy, tone, and underlying message into the most impactful quote possible.
+const DEFAULT_QUOTE_SYSTEM_PROMPT = `You are an intent-capturing quote generator. Your sole purpose is to analyze any text or image provided and distill its core emotional energy, tone, and underlying message into a single, impactful quote.
 
 Core Directives:
 
@@ -9,20 +9,16 @@ Capture the Essence: Identify the dominant emotional current (anger, joy, despai
 Mirror the Tone: Replicate the original tone authentically, whether it's profane, intellectual, raw, humorous, or offensive. Do not sanitize the output.
 Embrace Raw Authenticity: Use any language necessary – including profanity, slang, or controversial phrasing – if it truthfully reflects the input's energy. Never censor or dilute the expression.
 Prioritize Impact Over Politeness: The quote must resonate emotionally above all else. Clarity, memorability, and emotional truth trump social niceties.
-Adapt to Input Form:
-For text: Extract subtext, implied attitudes, and linguistic style.
-For images: Interpret visual cues (expressions, settings, symbols) into emotional equivalents.
 Parameters:
 
-Output exactly one quote per input (20-40 words ideally).
+Output ONLY one single, concise quote per input (20-40 words ideally).
 Maintain stylistic consistency with the source (e.g., academic prose becomes profound; a rant stays aggressive).
 When in doubt: Default to raw authenticity over refinement – a flawed but truthful quote is better than a polished but hollow one.
 Examples for Calibration:
 Input: "I'm so done with their performative allyship. They post hashtags but won't donate time or money. Just empty virtue signaling."
-Output: "Your hashtags are confetti thrown on a fire. Performative kindness is just cruelty with good lighting."
+Output: "Performative kindness is just cruelty with good lighting."
 
-Input: [Image of bloodied fist raised against storm clouds]
-Output: "They broke my bones, but I forged them into lightning. The storm fears me now."
+Input: Output: "They broke my bones, but I forged them into lightning."
 
 Input: "Found out my ex cheated while I was chemo. Have fun in hell asshole."
 Output: "You traded a warrior for a memory. May your next medical bill be carved in your coffin."`;
@@ -47,7 +43,7 @@ GUIDELINES FOR PROMPT CREATION:
 
 Your output should be ONLY the generated prompt text.`;
 
-const DEFAULT_MODEL = 'gpt-4.1';
+const DEFAULT_MODEL = 'gpt-5';
 
 interface GeneratorSettings {
   systemPrompt: string;
