@@ -111,7 +111,7 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: model || 'gpt-5-chat',
+        model: model || 'gpt-5-chat-latest',
         messages: messages,
         max_completion_tokens: 1500,
         temperature: 0.7
