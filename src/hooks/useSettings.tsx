@@ -43,7 +43,7 @@ GUIDELINES FOR PROMPT CREATION:
 
 Your output should be ONLY the generated prompt text.`;
 
-const DEFAULT_MODEL = 'gpt-5-chat';
+const DEFAULT_MODEL = 'gpt-5-chat-latest';
 
 interface GeneratorSettings {
   systemPrompt: string;
