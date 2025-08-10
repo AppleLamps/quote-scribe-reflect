@@ -79,7 +79,7 @@ Your output should be ONLY the generated prompt text.`;
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: model || 'gpt-5-chat',
+        model: model || 'gpt-5-chat-latest',
         messages: messages,
         max_completion_tokens: 1500,
         temperature: 0.6
