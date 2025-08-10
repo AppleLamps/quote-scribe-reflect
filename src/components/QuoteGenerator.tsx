@@ -21,6 +21,25 @@ export function QuoteGenerator() {
   const { saveQuote } = useQuotes(user?.id);
   const { settings } = useSettings();
 
+  // Ensure we don't double-wrap quotes: remove outer matching quotes if present
+  const sanitizeQuote = (text: string) => {
+    if (!text) return "";
+    const trimmed = text.trim();
+    const pairs: [string, string][] = [
+      ['"', '"'],
+      ['“', '”'],
+      ['«', '»'],
+      ['‹', '›'],
+      ["'", "'"]
+    ];
+    for (const [open, close] of pairs) {
+      if (trimmed.startsWith(open) && trimmed.endsWith(close)) {
+        return trimmed.slice(open.length, trimmed.length - close.length).trim();
+      }
+    }
+    return trimmed;
+  };
+
   const generateQuote = async () => {
     if (!inputText.trim() && attachedFiles.length === 0) {
       toast({
@@ -51,7 +70,7 @@ export function QuoteGenerator() {
         throw new Error(data.error);
       }
 
-      setGeneratedQuote(data.quote);
+      setGeneratedQuote(sanitizeQuote(data.quote));
       toast({
         title: "Quote Generated",
         description: "Your profound reflection has been created!",
@@ -94,7 +113,7 @@ export function QuoteGenerator() {
     if (!generatedQuote) return;
 
     try {
-      await navigator.clipboard.writeText(`"${generatedQuote}"`);
+      await navigator.clipboard.writeText(`"${sanitizeQuote(generatedQuote)}"`);
       toast({
         title: "Quote Copied",
         description: "The quote has been copied to your clipboard.",
@@ -229,7 +248,7 @@ export function QuoteGenerator() {
                 </div>
                 
                 <blockquote className="text-3xl md:text-4xl font-playfair font-medium leading-relaxed text-foreground italic max-w-4xl mx-auto tracking-wide">
-                  "{generatedQuote}"
+                  "{sanitizeQuote(generatedQuote)}"
                 </blockquote>
                 
                 <div className="flex items-center justify-center">
