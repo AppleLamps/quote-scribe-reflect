@@ -54,8 +54,7 @@ Examples for Calibration:
 Input: "I'm so done with their performative allyship. They post hashtags but won't donate time or money. Just empty virtue signaling."
 Output: "Your hashtags are confetti thrown on a fire. Performative kindness is just cruelty with good lighting."
 
-Input: [Image of bloodied fist raised against storm clouds]
-Output: "They broke my bones, but I forged them into lightning. The storm fears me now."
+Input: Output: "They broke my bones, but I forged them into lightning. The storm fears me now."
 
 Input: "Found out my ex cheated while I was chemo. Have fun in hell asshole."
 Output: "You traded a warrior for a memory. May your next medical bill be carved in your coffin."`;
@@ -112,7 +111,7 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: model || 'gpt-4.1',
+        model: model || 'gpt-5',
         messages: messages,
         max_tokens: 1500,
         temperature: 0.7
