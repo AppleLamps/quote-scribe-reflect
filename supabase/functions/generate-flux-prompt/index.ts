@@ -81,7 +81,7 @@ Your output should be ONLY the generated prompt text.`;
       body: JSON.stringify({
         model: model || 'gpt-5-chat',
         messages: messages,
-        max_tokens: 1500,
+        max_completion_tokens: 1500,
         temperature: 0.6
       })
     });
