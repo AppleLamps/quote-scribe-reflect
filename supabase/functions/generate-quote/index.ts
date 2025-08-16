@@ -122,6 +122,12 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
       requestBody.temperature = 0.7;
     }
 
+    console.log('Sending request to OpenAI with payload:', JSON.stringify({
+      model: requestBody.model,
+      messagesCount: messages.length,
+      userContentLength: userMessageContent.length
+    }));
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -131,13 +137,30 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
       body: JSON.stringify(requestBody)
     });
 
+    console.log('OpenAI API response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.json();
+      console.error('OpenAI API error response:', errorData);
       throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
     }
 
     const data = await response.json();
-    const generatedQuote = data.choices[0].message.content.trim();
+    console.log('OpenAI API response:', JSON.stringify(data, null, 2));
+    
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      console.error('Invalid response structure from OpenAI:', data);
+      throw new Error('Invalid response structure from OpenAI API');
+    }
+
+    const generatedQuote = data.choices[0].message.content?.trim();
+    
+    if (!generatedQuote) {
+      console.error('Empty quote generated from OpenAI response:', data);
+      throw new Error('Empty quote generated from OpenAI');
+    }
+
+    console.log('Successfully generated quote, length:', generatedQuote.length);
 
     return new Response(JSON.stringify({ quote: generatedQuote }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
