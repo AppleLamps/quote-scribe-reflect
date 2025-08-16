@@ -104,18 +104,31 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
 
     messages.push({ role: 'user', content: userMessageContent });
 
+    const modelToUse = model || 'gpt-4o-mini';
+    console.log('Using model:', modelToUse);
+    
+    // Different parameter sets for different model families
+    const requestBody: any = {
+      model: modelToUse,
+      messages: messages
+    };
+    
+    // GPT-5 models don't support temperature and use max_completion_tokens
+    if (modelToUse.startsWith('gpt-5') || modelToUse.startsWith('o3') || modelToUse.startsWith('o4')) {
+      requestBody.max_completion_tokens = 1500;
+    } else {
+      // Older models use max_tokens and support temperature
+      requestBody.max_tokens = 1500;
+      requestBody.temperature = 0.7;
+    }
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${openAIApiKey}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        model: model || 'gpt-5-chat-latest',
-        messages: messages,
-        max_completion_tokens: 1500,
-        temperature: 0.7
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
