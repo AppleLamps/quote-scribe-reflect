@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Sparkles, Copy, Save } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { useSettings } from "@/hooks/useSettings";
+
 
 export function FluxPromptGenerator() {
   const [inputText, setInputText] = useState("");
@@ -15,7 +15,7 @@ export function FluxPromptGenerator() {
   const [additionalDirections, setAdditionalDirections] = useState("");
   const { toast } = useToast();
   const { user } = useAuth();
-  const { settings } = useSettings();
+  
 
   const generatePrompt = async () => {
     if (!inputText.trim()) {
@@ -33,8 +33,6 @@ export function FluxPromptGenerator() {
         body: {
           text: inputText.trim(),
           directions: additionalDirections.trim() || undefined,
-          model: settings.image.model,
-          systemPrompt: settings.image.systemPrompt,
         }
       });
 

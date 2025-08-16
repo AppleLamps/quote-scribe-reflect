@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, BookOpen, Trash2, LogOut, User, Quote as QuoteIcon, Sparkles, Wand2, Settings } from "lucide-react";
+import { Search, BookOpen, Trash2, LogOut, User, Quote as QuoteIcon, Sparkles, Wand2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Sidebar,
@@ -19,14 +19,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import { useQuotes, Quote } from "@/hooks/useQuotes";
 import { useAuth } from "@/hooks/useAuth";
-import { SettingsDialog } from "@/components/SettingsDialog";
+
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const { user, signOut } = useAuth();
   const { quotes, loading, deleteQuote } = useQuotes(user?.id);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const filteredQuotes = quotes.filter(quote =>
     quote.content.toLowerCase().includes(searchQuery.toLowerCase())
@@ -185,14 +184,6 @@ export function AppSidebar() {
               </div>
             </Card>
 
-            <Button
-              variant="ghost"
-              onClick={() => setIsSettingsOpen(true)}
-              className="w-full justify-start gap-3 h-10 text-muted-foreground/80 hover:text-foreground hover:bg-glass/50 transition-all duration-200"
-            >
-              <Settings className="h-4 w-4" />
-              Settings
-            </Button>
 
             <Button
               variant="ghost"
@@ -205,7 +196,7 @@ export function AppSidebar() {
           </div>
         )}
       </SidebarContent>
-      <SettingsDialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen} />
+      
     </Sidebar>
   );
 }
