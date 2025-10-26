@@ -115,7 +115,7 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
     
     // GPT-5 models don't support temperature and use max_completion_tokens
     if (modelToUse.startsWith('gpt-5') || modelToUse.startsWith('o3') || modelToUse.startsWith('o4')) {
-      requestBody.max_completion_tokens = 1500;
+      requestBody.max_completion_tokens = 8000;
     } else {
       // Older models use max_tokens and support temperature
       requestBody.max_tokens = 1500;
