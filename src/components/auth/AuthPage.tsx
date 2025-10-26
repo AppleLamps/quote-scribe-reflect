@@ -6,6 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Quote } from "lucide-react";
+import { z } from "zod";
+
+const authSchema = z.object({
+  email: z.string().email('Invalid email format').max(255, 'Email must be less than 255 characters'),
+  password: z.string().min(8, 'Password must be at least 8 characters').max(128, 'Password must be less than 128 characters')
+});
 
 export function AuthPage() {
   const [email, setEmail] = useState("");
@@ -18,10 +24,23 @@ export function AuthPage() {
     setIsLoading(true);
 
     try {
+      // Validate inputs
+      const validation = authSchema.safeParse({ email, password });
+      if (!validation.success) {
+        const firstError = validation.error.errors[0];
+        toast({
+          title: "Validation error",
+          description: firstError.message,
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const redirectUrl = `${window.location.origin}/`;
       const { error } = await supabase.auth.signUp({
-        email,
-        password,
+        email: validation.data.email,
+        password: validation.data.password,
         options: {
           emailRedirectTo: redirectUrl
         }
@@ -59,9 +78,22 @@ export function AuthPage() {
     setIsLoading(true);
 
     try {
+      // Validate inputs
+      const validation = authSchema.safeParse({ email, password });
+      if (!validation.success) {
+        const firstError = validation.error.errors[0];
+        toast({
+          title: "Validation error",
+          description: firstError.message,
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: validation.data.email,
+        password: validation.data.password,
       });
 
       if (error) {
