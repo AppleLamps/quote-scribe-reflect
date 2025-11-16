@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -107,6 +107,7 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
+          model: string
           title: string
           updated_at: string | null
           user_id: string
@@ -114,6 +115,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
+          model?: string
           title: string
           updated_at?: string | null
           user_id: string
@@ -121,6 +123,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
+          model?: string
           title?: string
           updated_at?: string | null
           user_id?: string
@@ -259,6 +262,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notebook_notes: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          tags: string[]
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: string
+          created_at?: string
+          id?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notes: {
+        Row: {
+          id: number
+          title: string
+        }
+        Insert: {
+          id?: never
+          title: string
+        }
+        Update: {
+          id?: never
+          title?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -467,14 +515,65 @@ export type Database = {
         }
         Relationships: []
       }
+      video_downloads: {
+        Row: {
+          created_at: string
+          download_qualities: Json | null
+          error_message: string | null
+          id: string
+          status: string
+          thumbnail_url: string | null
+          twitter_url: string
+          updated_at: string
+          user_id: string | null
+          video_author: string | null
+          video_duration: string | null
+          video_title: string | null
+        }
+        Insert: {
+          created_at?: string
+          download_qualities?: Json | null
+          error_message?: string | null
+          id?: string
+          status?: string
+          thumbnail_url?: string | null
+          twitter_url: string
+          updated_at?: string
+          user_id?: string | null
+          video_author?: string | null
+          video_duration?: string | null
+          video_title?: string | null
+        }
+        Update: {
+          created_at?: string
+          download_qualities?: Json | null
+          error_message?: string | null
+          id?: string
+          status?: string
+          thumbnail_url?: string | null
+          twitter_url?: string
+          updated_at?: string
+          user_id?: string | null
+          video_author?: string | null
+          video_duration?: string | null
+          video_title?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      check_vector_ext: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
+      check_vector_ext: { Args: never; Returns: boolean }
+      debug_current_user: {
+        Args: never
+        Returns: {
+          auth_users_count: number
+          current_user_email: string
+          current_user_id: string
+          users_table_count: number
+        }[]
       }
       is_bookmarked: {
         Args: { article_id: number; user_id: string }
@@ -482,10 +581,10 @@ export type Database = {
       }
       upsert_repo_metadata: {
         Args: {
-          p_repo_url: string
-          p_repo_name: string
           p_file_count: number
           p_file_hashes: Json
+          p_repo_name: string
+          p_repo_url: string
         }
         Returns: undefined
       }
