@@ -104,7 +104,7 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
 
     messages.push({ role: 'user', content: userMessageContent });
 
-    const modelToUse = model || 'gpt-5-2025-08-07';
+    const modelToUse = model || 'gpt-5.1';
     console.log('Using model:', modelToUse);
     
     // Different parameter sets for different model families
