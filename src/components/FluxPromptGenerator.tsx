@@ -26,7 +26,7 @@ export function FluxPromptGenerator() {
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [additionalDirections, setAdditionalDirections] = useState("");
-  const { toast } = useToast();
+  const [selectedModel, setSelectedModel] = useState("google/gemini-3-flash-preview");
   const { user } = useAuth();
   
 
