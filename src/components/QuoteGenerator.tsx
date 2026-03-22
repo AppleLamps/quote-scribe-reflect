@@ -129,18 +129,15 @@ export function QuoteGenerator() {
   return (
     <div className="min-h-screen bg-gradient-subtle flex flex-col">
       {/* Hero Section */}
-      <div className="flex-1 container mx-auto px-4 py-12 max-w-5xl">
-        <div className="text-center mb-4 animate-fade-in-up">
-          <h1 className="text-5xl md:text-7xl font-playfair font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight leading-none">
-            LampScribe
-          </h1>
-        </div>
-
+        <div className="flex-1 container mx-auto px-4 py-12 max-w-5xl">
         {/* Input Section */}
         <Card variant="floating" className="mb-12 overflow-hidden relative group animate-fade-in-up">
           <div className="absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-100 transition-all duration-700"></div>
           <CardContent className="p-10 relative z-10">
             <div className="space-y-8">
+              <h1 className="text-2xl md:text-3xl font-playfair font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight leading-none">
+                LampScribe
+              </h1>
               <div className="space-y-4">
                 <label htmlFor="input-text" className="text-lg font-semibold text-foreground font-inter tracking-wide">
                   Share your text
