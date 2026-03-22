@@ -47,6 +47,7 @@ export function FluxPromptGenerator() {
         body: {
           text: inputText.trim(),
           directions: additionalDirections.trim() || undefined,
+          model: selectedModel,
         }
       });
 
