@@ -105,6 +105,7 @@ export function QuoteGenerator() {
     setGeneratedQuote("");
     setAttachedFiles([]);
     setAdditionalDirections("");
+    setSelectedModel("google/gemini-3-flash-preview");
   };
 
   const handleSaveQuote = async () => {
