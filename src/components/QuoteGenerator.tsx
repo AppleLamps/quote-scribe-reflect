@@ -29,6 +29,7 @@ export function QuoteGenerator() {
   const [isLoading, setIsLoading] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<UploadedFile[]>([]);
   const [additionalDirections, setAdditionalDirections] = useState("");
+  const [selectedModel, setSelectedModel] = useState("google/gemini-3-flash-preview");
   const { toast } = useToast();
   const { user } = useAuth();
   const { saveQuote } = useQuotes(user?.id);
