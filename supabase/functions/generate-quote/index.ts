@@ -2,19 +2,28 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version'
 };
 
-const ALLOWED_MODELS = ['gpt-5.4-2026-03-05'];
+const ALLOWED_MODELS = [
+  'google/gemini-3-flash-preview',
+  'google/gemini-2.5-pro',
+  'google/gemini-2.5-flash',
+  'google/gemini-2.5-flash-lite',
+  'google/gemini-3.1-pro-preview',
+  'openai/gpt-5',
+  'openai/gpt-5-mini',
+  'openai/gpt-5-nano',
+  'openai/gpt-5.2',
+];
+const DEFAULT_MODEL = 'google/gemini-3-flash-preview';
 const MAX_TEXT_LENGTH = 50000;
 const MAX_DIRECTIONS_LENGTH = 5000;
 const MAX_FILES = 10;
 
-serve(async (req)=>{
+serve(async (req) => {
   console.log('Edge function called, method:', req.method);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -38,26 +47,23 @@ serve(async (req)=>{
     }
 
     // --- Input parsing & validation ---
-    if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured');
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY is not configured');
     }
 
     const { text, files, directions, model } = await req.json();
 
-    // Validate text length
     if (text && typeof text === 'string' && text.length > MAX_TEXT_LENGTH) {
       return new Response(JSON.stringify({ error: 'Text exceeds maximum length' }), { status: 400, headers: corsHeaders });
     }
 
-    // Validate directions length
     if (directions && typeof directions === 'string' && directions.length > MAX_DIRECTIONS_LENGTH) {
       return new Response(JSON.stringify({ error: 'Directions exceed maximum length' }), { status: 400, headers: corsHeaders });
     }
 
-    // Validate model
-    const modelToUse = (model && ALLOWED_MODELS.includes(model)) ? model : ALLOWED_MODELS[0];
+    const modelToUse = (model && ALLOWED_MODELS.includes(model)) ? model : DEFAULT_MODEL;
 
-    // Validate files count
     if (files && Array.isArray(files) && files.length > MAX_FILES) {
       return new Response(JSON.stringify({ error: `Maximum ${MAX_FILES} files allowed` }), { status: 400, headers: corsHeaders });
     }
@@ -115,7 +121,7 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
 
     if (files && Array.isArray(files) && files.length > 0) {
       console.log(`Processing ${files.length} files`);
-      for (const file of files){
+      for (const file of files) {
         try {
           if (file.type && file.type.startsWith('image/')) {
             userMessageContent.push({
@@ -145,44 +151,47 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
     messages.push({ role: 'user', content: userMessageContent });
 
     console.log('Using model:', modelToUse);
-    
-    const requestBody: any = {
-      model: modelToUse,
-      messages: messages
-    };
-    
-    if (modelToUse.startsWith('gpt-5') || modelToUse.startsWith('o3') || modelToUse.startsWith('o4')) {
-      requestBody.max_completion_tokens = 8000;
-    } else {
-      requestBody.max_tokens = 1500;
-      requestBody.temperature = 0.7;
-    }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(requestBody)
+      body: JSON.stringify({
+        model: modelToUse,
+        messages: messages,
+        max_tokens: 1500,
+        temperature: 0.7,
+      })
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('OpenAI API error response:', errorData);
-      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: 'Rate limit exceeded. Please try again in a moment.' }), {
+          status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: 'AI credits exhausted. Please add funds in Settings > Workspace > Usage.' }), {
+          status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      const errorData = await response.text();
+      console.error('AI gateway error:', response.status, errorData);
+      throw new Error(`AI gateway error: ${errorData}`);
     }
 
     const data = await response.json();
-    
+
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      throw new Error('Invalid response structure from OpenAI API');
+      throw new Error('Invalid response structure from AI gateway');
     }
 
     const generatedQuote = data.choices[0].message.content?.trim();
-    
+
     if (!generatedQuote) {
-      throw new Error('Empty quote generated from OpenAI');
+      throw new Error('Empty quote generated');
     }
 
     return new Response(JSON.stringify({ quote: generatedQuote }), {

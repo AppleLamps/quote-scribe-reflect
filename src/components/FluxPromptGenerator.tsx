@@ -6,6 +6,19 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Sparkles, Copy, Save } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const AI_MODELS = [
+  { value: 'google/gemini-3-flash-preview', label: 'Gemini 3 Flash', description: 'Fast & balanced' },
+  { value: 'google/gemini-2.5-pro', label: 'Gemini 2.5 Pro', description: 'Best reasoning' },
+  { value: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash', description: 'Good balance' },
+  { value: 'google/gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite', description: 'Fastest' },
+  { value: 'google/gemini-3.1-pro-preview', label: 'Gemini 3.1 Pro', description: 'Latest reasoning' },
+  { value: 'openai/gpt-5', label: 'GPT-5', description: 'Powerful all-rounder' },
+  { value: 'openai/gpt-5-mini', label: 'GPT-5 Mini', description: 'Cost effective' },
+  { value: 'openai/gpt-5-nano', label: 'GPT-5 Nano', description: 'Ultra fast' },
+  { value: 'openai/gpt-5.2', label: 'GPT-5.2', description: 'Enhanced reasoning' },
+];
 
 
 export function FluxPromptGenerator() {
@@ -13,6 +26,7 @@ export function FluxPromptGenerator() {
   const [generatedPrompt, setGeneratedPrompt] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [additionalDirections, setAdditionalDirections] = useState("");
+  const [selectedModel, setSelectedModel] = useState("google/gemini-3-flash-preview");
   const { toast } = useToast();
   const { user } = useAuth();
   
@@ -33,6 +47,7 @@ export function FluxPromptGenerator() {
         body: {
           text: inputText.trim(),
           directions: additionalDirections.trim() || undefined,
+          model: selectedModel,
         }
       });
 
@@ -65,6 +80,7 @@ export function FluxPromptGenerator() {
     setInputText("");
     setGeneratedPrompt("");
     setAdditionalDirections("");
+    setSelectedModel("google/gemini-3-flash-preview");
   };
 
   const handleCopyPrompt = async () => {
@@ -144,6 +160,25 @@ export function FluxPromptGenerator() {
                   className="min-h-[100px] text-base leading-relaxed font-inter"
                   disabled={isLoading}
                 />
+              </div>
+
+              <div className="space-y-4">
+                <label className="text-lg font-semibold text-foreground font-inter tracking-wide">
+                  AI Model
+                </label>
+                <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading}>
+                  <SelectTrigger className="bg-card/50 border-border/50 backdrop-blur-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {AI_MODELS.map((m) => (
+                      <SelectItem key={m.value} value={m.value}>
+                        <span className="font-medium">{m.label}</span>
+                        <span className="text-muted-foreground ml-2 text-sm">— {m.description}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex gap-4 justify-center pt-4">
