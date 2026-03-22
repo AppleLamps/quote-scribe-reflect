@@ -162,6 +162,25 @@ export function FluxPromptGenerator() {
                 />
               </div>
 
+              <div className="space-y-4">
+                <label className="text-lg font-semibold text-foreground font-inter tracking-wide">
+                  AI Model
+                </label>
+                <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading}>
+                  <SelectTrigger className="bg-card/50 border-border/50 backdrop-blur-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {AI_MODELS.map((m) => (
+                      <SelectItem key={m.value} value={m.value}>
+                        <span className="font-medium">{m.label}</span>
+                        <span className="text-muted-foreground ml-2 text-sm">— {m.description}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="flex gap-4 justify-center pt-4">
                 <Button
                   variant="hero"
