@@ -130,24 +130,10 @@ export function QuoteGenerator() {
     <div className="min-h-screen bg-gradient-subtle flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 container mx-auto px-4 py-12 max-w-5xl">
-        <div className="text-center mb-20 animate-fade-in-up">
-          <div className="inline-flex items-center gap-4 mb-8">
-            <div className="relative animate-float">
-              <Sparkles className="h-12 w-12 text-transparent bg-gradient-primary bg-clip-text" />
-              <div className="absolute inset-0 h-12 w-12 bg-gradient-primary opacity-30 blur-xl animate-glow-pulse"></div>
-            </div>
-            <h1 className="text-6xl md:text-8xl font-playfair font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight leading-none">
-              Quote Scribe
-            </h1>
-          </div>
-          <div className="space-y-6">
-            <p className="text-2xl md:text-3xl text-foreground/90 max-w-4xl mx-auto leading-relaxed font-inter font-light tracking-wide">
-              Transform any text or image into profound wisdom
-            </p>
-            <p className="text-xl text-muted-foreground/80 max-w-3xl mx-auto leading-relaxed font-inter font-light">
-              Share your thoughts, upload photos, or paste articles to discover deeper meanings through AI-generated reflections
-            </p>
-          </div>
+        <div className="text-center mb-10 animate-fade-in-up">
+          <h1 className="text-5xl md:text-7xl font-playfair font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight leading-none">
+            LampScribe
+          </h1>
         </div>
 
         {/* Input Section */}
