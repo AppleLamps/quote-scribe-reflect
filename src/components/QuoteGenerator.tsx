@@ -130,7 +130,7 @@ export function QuoteGenerator() {
     <div className="min-h-screen bg-gradient-subtle flex flex-col">
       {/* Hero Section */}
       <div className="flex-1 container mx-auto px-4 py-12 max-w-5xl">
-        <div className="text-center mb-10 animate-fade-in-up">
+        <div className="text-center mb-4 animate-fade-in-up">
           <h1 className="text-5xl md:text-7xl font-playfair font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight leading-none">
             LampScribe
           </h1>
