@@ -51,7 +51,7 @@ export function FileUpload({ onFilesChange, files, disabled }: FileUploadProps) 
         supabase.storage
           .from('quote-attachments')
           .upload(fileId, file)
-          .then(({ data, error }) => {
+          .then(async ({ data, error }) => {
             if (error) {
               toast({
                 title: "Upload failed",
@@ -61,14 +61,23 @@ export function FileUpload({ onFilesChange, files, disabled }: FileUploadProps) 
               return null;
             }
             
-            const { data: { publicUrl } } = supabase.storage
+            const { data: signedUrlData, error: signedUrlError } = await supabase.storage
               .from('quote-attachments')
-              .getPublicUrl(data.path);
+              .createSignedUrl(data.path, 3600);
+
+            if (signedUrlError || !signedUrlData) {
+              toast({
+                title: "Upload failed",
+                description: `Failed to get URL for ${file.name}`,
+                variant: "destructive",
+              });
+              return null;
+            }
 
             return {
               id: data.path,
               name: file.name,
-              url: publicUrl,
+              url: signedUrlData.signedUrl,
               type: file.type,
               size: file.size,
             };
