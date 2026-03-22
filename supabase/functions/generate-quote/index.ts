@@ -1,5 +1,6 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
@@ -8,33 +9,67 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version'
 };
 
+const ALLOWED_MODELS = ['gpt-5.4-2026-03-05'];
+const MAX_TEXT_LENGTH = 50000;
+const MAX_DIRECTIONS_LENGTH = 5000;
+const MAX_FILES = 10;
+
 serve(async (req)=>{
   console.log('Edge function called, method:', req.method);
   if (req.method === 'OPTIONS') {
-    console.log('Handling CORS preflight');
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.log('Processing request...');
+    // --- Auth check ---
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
+    }
 
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!
+    );
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
+    }
+
+    // --- Input parsing & validation ---
     if (!openAIApiKey) {
-      console.error('OpenAI API key not configured');
       throw new Error('OpenAI API key not configured');
     }
 
-    console.log('OpenAI API key found, length:', openAIApiKey.length);
+    const { text, files, directions, model } = await req.json();
 
-    const { text, files, directions, model, systemPrompt } = await req.json();
+    // Validate text length
+    if (text && typeof text === 'string' && text.length > MAX_TEXT_LENGTH) {
+      return new Response(JSON.stringify({ error: 'Text exceeds maximum length' }), { status: 400, headers: corsHeaders });
+    }
 
-    if (!text || text.trim().length === 0) {
-      if (!files || files.length === 0) {
-        throw new Error('Either text content or files are required');
+    // Validate directions length
+    if (directions && typeof directions === 'string' && directions.length > MAX_DIRECTIONS_LENGTH) {
+      return new Response(JSON.stringify({ error: 'Directions exceed maximum length' }), { status: 400, headers: corsHeaders });
+    }
+
+    // Validate model
+    const modelToUse = (model && ALLOWED_MODELS.includes(model)) ? model : ALLOWED_MODELS[0];
+
+    // Validate files count
+    if (files && Array.isArray(files) && files.length > MAX_FILES) {
+      return new Response(JSON.stringify({ error: `Maximum ${MAX_FILES} files allowed` }), { status: 400, headers: corsHeaders });
+    }
+
+    if (!text || (typeof text === 'string' && text.trim().length === 0)) {
+      if (!files || !Array.isArray(files) || files.length === 0) {
+        return new Response(JSON.stringify({ error: 'Either text content or files are required' }), { status: 400, headers: corsHeaders });
       }
     }
 
-    // New default system prompt (raw authenticity focused)
-    let systemContent = systemPrompt || `You are an intent-capturing quote generator. Analyze any text or image description and distill its core emotional energy, tone, and underlying message into the most impactful quote possible.
+    // System prompt (server-defined, not overridable)
+    let systemContent = `You are an intent-capturing quote generator. Analyze any text or image description and distill its core emotional energy, tone, and underlying message into the most impactful quote possible.
 
 CORE DIRECTIVES:
 
@@ -64,7 +99,7 @@ Output: "They broke my bones and I forged them into lightning. The storm fears m
 Input: "Found out my ex cheated while I was on chemo. Have fun in hell asshole."
 Output: "You traded a warrior for a memory. May your next medical bill be carved in your coffin."`;
 
-    if (directions && directions.trim().length > 0) {
+    if (directions && typeof directions === 'string' && directions.trim().length > 0) {
       systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
     }
 
@@ -74,15 +109,15 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
 
     const userMessageContent = [];
 
-    if (text && text.trim().length > 0) {
+    if (text && typeof text === 'string' && text.trim().length > 0) {
       userMessageContent.push({ type: 'text', text: `Text content: ${text.trim()}` });
     }
 
-    if (files && files.length > 0) {
+    if (files && Array.isArray(files) && files.length > 0) {
       console.log(`Processing ${files.length} files`);
       for (const file of files){
         try {
-          if (file.type.startsWith('image/')) {
+          if (file.type && file.type.startsWith('image/')) {
             userMessageContent.push({
               type: 'image_url',
               image_url: { url: file.url, detail: 'high' }
@@ -91,7 +126,7 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
             const fileResponse = await fetch(file.url);
             if (fileResponse.ok) {
               const fileContent = await fileResponse.text();
-              userMessageContent.push({ type: 'text', text: `Content from ${file.name}:\n${fileContent}` });
+              userMessageContent.push({ type: 'text', text: `Content from ${file.name}:\n${fileContent.slice(0, 50000)}` });
             }
           } else {
             userMessageContent.push({ type: 'text', text: `[File attached: ${file.name}]` });
@@ -109,29 +144,19 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
 
     messages.push({ role: 'user', content: userMessageContent });
 
-    const modelToUse = model || 'gpt-5.4-2026-03-05';
     console.log('Using model:', modelToUse);
     
-    // Different parameter sets for different model families
     const requestBody: any = {
       model: modelToUse,
       messages: messages
     };
     
-    // GPT-5 models don't support temperature and use max_completion_tokens
     if (modelToUse.startsWith('gpt-5') || modelToUse.startsWith('o3') || modelToUse.startsWith('o4')) {
       requestBody.max_completion_tokens = 8000;
     } else {
-      // Older models use max_tokens and support temperature
       requestBody.max_tokens = 1500;
       requestBody.temperature = 0.7;
     }
-
-    console.log('Sending request to OpenAI with payload:', JSON.stringify({
-      model: requestBody.model,
-      messagesCount: messages.length,
-      userContentLength: userMessageContent.length
-    }));
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -142,8 +167,6 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
       body: JSON.stringify(requestBody)
     });
 
-    console.log('OpenAI API response status:', response.status);
-
     if (!response.ok) {
       const errorData = await response.json();
       console.error('OpenAI API error response:', errorData);
@@ -151,21 +174,16 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
     }
 
     const data = await response.json();
-    console.log('OpenAI API response:', JSON.stringify(data, null, 2));
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      console.error('Invalid response structure from OpenAI:', data);
       throw new Error('Invalid response structure from OpenAI API');
     }
 
     const generatedQuote = data.choices[0].message.content?.trim();
     
     if (!generatedQuote) {
-      console.error('Empty quote generated from OpenAI response:', data);
       throw new Error('Empty quote generated from OpenAI');
     }
-
-    console.log('Successfully generated quote, length:', generatedQuote.length);
 
     return new Response(JSON.stringify({ quote: generatedQuote }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
