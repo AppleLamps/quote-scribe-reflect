@@ -8,6 +8,19 @@ import { Loader2, Sparkles, Quote, Save, Copy } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useQuotes } from "@/hooks/useQuotes";
 import { FileUpload, UploadedFile } from "@/components/FileUpload";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const AI_MODELS = [
+  { value: 'google/gemini-3-flash-preview', label: 'Gemini 3 Flash', description: 'Fast & balanced' },
+  { value: 'google/gemini-2.5-pro', label: 'Gemini 2.5 Pro', description: 'Best reasoning' },
+  { value: 'google/gemini-2.5-flash', label: 'Gemini 2.5 Flash', description: 'Good balance' },
+  { value: 'google/gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash Lite', description: 'Fastest' },
+  { value: 'google/gemini-3.1-pro-preview', label: 'Gemini 3.1 Pro', description: 'Latest reasoning' },
+  { value: 'openai/gpt-5', label: 'GPT-5', description: 'Powerful all-rounder' },
+  { value: 'openai/gpt-5-mini', label: 'GPT-5 Mini', description: 'Cost effective' },
+  { value: 'openai/gpt-5-nano', label: 'GPT-5 Nano', description: 'Ultra fast' },
+  { value: 'openai/gpt-5.2', label: 'GPT-5.2', description: 'Enhanced reasoning' },
+];
 
 
 export function QuoteGenerator() {
