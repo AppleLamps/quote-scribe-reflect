@@ -94,18 +94,25 @@ Your output should be ONLY the generated prompt text.`;
 
     messages.push({ role: 'user', content: [{ type: 'text', text: `Idea to convert to Flux prompt: ${text.trim()}` }] });
 
+    const isOpenAI = modelToUse.startsWith('openai/');
+    const requestBody: Record<string, unknown> = {
+      model: modelToUse,
+      messages: messages,
+      temperature: 0.7,
+    };
+    if (isOpenAI) {
+      requestBody.max_completion_tokens = 1500;
+    } else {
+      requestBody.max_tokens = 1500;
+    }
+
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        model: modelToUse,
-        messages: messages,
-        max_tokens: 1500,
-        temperature: 0.7,
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
