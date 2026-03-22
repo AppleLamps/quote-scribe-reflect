@@ -57,9 +57,9 @@ function AppContent() {
       <div className="min-h-screen flex w-full">
         <AppSidebar />
         <main className="flex-1 flex flex-col">
-          <header className="h-12 flex items-center border-b border-border/50 bg-card/30 backdrop-blur-sm px-4 gap-3">
+          <header className="h-12 flex items-center border-b border-border/50 bg-card/30 backdrop-blur-sm px-4 relative">
             <EnhancedSidebarTrigger />
-            <h1 className="text-xl font-playfair font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight leading-none">
+            <h1 className="absolute left-1/2 -translate-x-1/2 text-xl font-playfair font-bold bg-gradient-primary bg-clip-text text-transparent tracking-tight leading-none">
               LampScribe
             </h1>
           </header>
