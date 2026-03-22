@@ -71,6 +71,7 @@ export function QuoteGenerator() {
           text: inputText.trim(), 
           files: attachedFiles,
           directions: additionalDirections.trim() || undefined,
+          model: selectedModel,
         }
       });
 
