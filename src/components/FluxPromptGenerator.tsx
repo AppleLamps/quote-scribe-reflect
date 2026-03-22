@@ -80,6 +80,7 @@ export function FluxPromptGenerator() {
     setInputText("");
     setGeneratedPrompt("");
     setAdditionalDirections("");
+    setSelectedModel("google/gemini-3-flash-preview");
   };
 
   const handleCopyPrompt = async () => {
