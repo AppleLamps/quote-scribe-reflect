@@ -49,14 +49,16 @@ serve(async (req) => {
     // Build the user message content
     const contentParts: any[] = [];
 
-    let prompt = "Generate a visually striking, artistic image that represents the essence and meaning of the following content. The image should be evocative, symbolic, and beautiful — capturing the core emotion and theme.";
+    let prompt = "You are an artist. Create an abstract, symbolic, visually striking image inspired by the themes and emotions in the following content. Focus on colors, shapes, textures, and metaphorical imagery. Do NOT include any text, words, or letters in the image. Keep it artistic and abstract.";
 
     if (directions) {
-      prompt += `\n\nAdditional artistic direction: ${directions}`;
+      prompt += `\n\nArtistic style guidance: ${directions}`;
     }
 
     if (text && text.trim()) {
-      prompt += `\n\nContent to visualize:\n${text.trim()}`;
+      // Truncate to avoid overwhelming the model
+      const truncated = text.trim().substring(0, 2000);
+      prompt += `\n\nThemes to visualize:\n${truncated}`;
     }
 
     contentParts.push({ type: "text", text: prompt });
@@ -114,11 +116,24 @@ serve(async (req) => {
     }
 
     const data = await response.json();
+    console.log('Response keys:', JSON.stringify(Object.keys(data)));
+    console.log('Choices:', JSON.stringify(data.choices?.map((c: any) => ({
+      hasImages: !!c.message?.images?.length,
+      contentPreview: c.message?.content?.substring(0, 200),
+      finishReason: c.finish_reason,
+    }))));
+    
     const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
     const textResponse = data.choices?.[0]?.message?.content;
 
     if (!imageUrl) {
-      throw new Error('No image was generated. The model may not have produced an image for this input.');
+      const finishReason = data.choices?.[0]?.finish_reason;
+      const errorMsg = finishReason === 'safety' || finishReason === 'content_filter'
+        ? 'The content was flagged by safety filters. Try rephrasing or using more abstract language.'
+        : 'No image was generated. Try simplifying your input or changing the artistic direction.';
+      return new Response(JSON.stringify({ error: errorMsg }), {
+        status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     return new Response(JSON.stringify({ imageUrl, description: textResponse }), {
