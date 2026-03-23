@@ -68,6 +68,7 @@ function AppContent() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/flux" element={<FluxPrompt />} />
+              <Route path="/image" element={<ImageGen />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

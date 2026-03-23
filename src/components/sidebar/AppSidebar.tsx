@@ -93,6 +93,15 @@ export function AppSidebar() {
                   Flux Prompt Generator
                 </Button>
               </Link>
+              <Link to="/image">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 h-10 text-foreground/80 hover:text-foreground hover:bg-glass/50 transition-all duration-200"
+                >
+                  <ImageIcon className="h-4 w-4" />
+                  Image Generator
+                </Button>
+              </Link>
             </div>
           )}
 
