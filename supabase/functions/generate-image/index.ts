@@ -49,14 +49,16 @@ serve(async (req) => {
     // Build the user message content
     const contentParts: any[] = [];
 
-    let prompt = "Generate a visually striking, artistic image that represents the essence and meaning of the following content. The image should be evocative, symbolic, and beautiful — capturing the core emotion and theme.";
+    let prompt = "You are an artist. Create an abstract, symbolic, visually striking image inspired by the themes and emotions in the following content. Focus on colors, shapes, textures, and metaphorical imagery. Do NOT include any text, words, or letters in the image. Keep it artistic and abstract.";
 
     if (directions) {
-      prompt += `\n\nAdditional artistic direction: ${directions}`;
+      prompt += `\n\nArtistic style guidance: ${directions}`;
     }
 
     if (text && text.trim()) {
-      prompt += `\n\nContent to visualize:\n${text.trim()}`;
+      // Truncate to avoid overwhelming the model
+      const truncated = text.trim().substring(0, 2000);
+      prompt += `\n\nThemes to visualize:\n${truncated}`;
     }
 
     contentParts.push({ type: "text", text: prompt });
