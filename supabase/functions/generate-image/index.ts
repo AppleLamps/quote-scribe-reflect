@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,33 +12,74 @@ const ALLOWED_IMAGE_MODELS = [
   'google/gemini-3.1-flash-image-preview',
 ];
 
+const MAX_TEXT_LENGTH = 50000;
+const MAX_DIRECTIONS_LENGTH = 5000;
+const MAX_FILES = 10;
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // --- Auth check ---
     const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
         status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const userId = claimsData.claims.sub;
+    console.log('Authenticated user:', userId);
+
+    // --- Input parsing & validation ---
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY is not configured');
+    }
+
     const { text, files, directions, model } = await req.json();
 
-    if ((!text || typeof text !== 'string' || text.trim().length === 0) && (!files || files.length === 0)) {
+    if (text && typeof text === 'string' && text.length > MAX_TEXT_LENGTH) {
+      return new Response(JSON.stringify({ error: 'Text exceeds maximum length' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (directions && typeof directions === 'string' && directions.length > MAX_DIRECTIONS_LENGTH) {
+      return new Response(JSON.stringify({ error: 'Directions exceed maximum length' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (files && Array.isArray(files) && files.length > MAX_FILES) {
+      return new Response(JSON.stringify({ error: `Maximum ${MAX_FILES} files allowed` }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if ((!text || typeof text !== 'string' || text.trim().length === 0) && (!files || !Array.isArray(files) || files.length === 0)) {
       return new Response(JSON.stringify({ error: 'Text or files are required' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const imageModel = ALLOWED_IMAGE_MODELS.includes(model) ? model : 'google/gemini-3.1-flash-image-preview';
-
-    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
-    if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
-    }
 
     // ===== STEP 1: Use text model to craft the perfect image generation prompt =====
     console.log('Step 1: Generating optimized image prompt with text model...');
@@ -51,7 +93,7 @@ serve(async (req) => {
     }
 
     // Build content for the text model (include uploaded images for context)
-    const textModelContent: any[] = [
+    const textModelContent: Array<Record<string, unknown>> = [
       {
         type: "text",
         text: `You are an expert image prompt engineer for a creativity app. Users paste thoughts, quotes, notes, or attach reference images. Some want a literal scene; others want a symbolic or metaphorical visualization.
@@ -79,16 +121,25 @@ Output only the final image prompt, nothing else.`
       }
     ];
 
-    // If images were uploaded, include them for the text model to analyze
-    if (files && files.length > 0) {
+    // If images were uploaded, fetch them via signed URL and convert to base64 for the text model
+    if (files && Array.isArray(files) && files.length > 0) {
       for (const file of files) {
-        if (file.base64 && file.type?.startsWith('image/')) {
-          textModelContent.push({
-            type: "image_url",
-            image_url: {
-              url: `data:${file.type};base64,${file.base64}`
+        if (file.type?.startsWith('image/') && file.url) {
+          try {
+            const imgResponse = await fetch(file.url);
+            if (imgResponse.ok) {
+              const arrayBuffer = await imgResponse.arrayBuffer();
+              const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+              textModelContent.push({
+                type: "image_url",
+                image_url: {
+                  url: `data:${file.type};base64,${base64}`
+                }
+              });
             }
-          });
+          } catch (e) {
+            console.error(`Failed to fetch image ${file.name}:`, e);
+          }
         }
       }
     }
@@ -189,9 +240,10 @@ Output only the final image prompt, nothing else.`
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error generating image:', error);
-    return new Response(JSON.stringify({ error: error.message || 'Failed to generate image' }), {
+    const message = error instanceof Error ? error.message : 'Failed to generate image';
+    return new Response(JSON.stringify({ error: message }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
