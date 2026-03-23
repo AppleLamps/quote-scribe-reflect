@@ -109,7 +109,7 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
       systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
     }
 
-    const messages = [
+    const messages: Array<{ role: string; content: string | Array<Record<string, unknown>> }> = [
       { role: 'system', content: systemContent }
     ];
 
