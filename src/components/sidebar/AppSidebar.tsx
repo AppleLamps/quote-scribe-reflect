@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, BookOpen, Trash2, LogOut, User, Quote as QuoteIcon, Sparkles, Wand2 } from "lucide-react";
+import { Search, BookOpen, Trash2, LogOut, User, Quote as QuoteIcon, Sparkles, Wand2, ImageIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Sidebar,
