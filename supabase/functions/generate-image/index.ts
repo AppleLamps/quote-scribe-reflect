@@ -116,11 +116,24 @@ serve(async (req) => {
     }
 
     const data = await response.json();
+    console.log('Response keys:', JSON.stringify(Object.keys(data)));
+    console.log('Choices:', JSON.stringify(data.choices?.map((c: any) => ({
+      hasImages: !!c.message?.images?.length,
+      contentPreview: c.message?.content?.substring(0, 200),
+      finishReason: c.finish_reason,
+    }))));
+    
     const imageUrl = data.choices?.[0]?.message?.images?.[0]?.image_url?.url;
     const textResponse = data.choices?.[0]?.message?.content;
 
     if (!imageUrl) {
-      throw new Error('No image was generated. The model may not have produced an image for this input.');
+      const finishReason = data.choices?.[0]?.finish_reason;
+      const errorMsg = finishReason === 'safety' || finishReason === 'content_filter'
+        ? 'The content was flagged by safety filters. Try rephrasing or using more abstract language.'
+        : 'No image was generated. Try simplifying your input or changing the artistic direction.';
+      return new Response(JSON.stringify({ error: errorMsg }), {
+        status: 422, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     return new Response(JSON.stringify({ imageUrl, description: textResponse }), {
