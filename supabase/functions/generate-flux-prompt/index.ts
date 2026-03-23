@@ -92,7 +92,7 @@ Your output should be ONLY the generated prompt text.`;
       { role: 'system', content: systemContent }
     ];
 
-    messages.push({ role: 'user', content: [{ type: 'text', text: `Idea to convert to Flux prompt: ${text.trim()}` }] });
+    messages.push({ role: 'user', content: `Idea to convert to Flux prompt: ${text.trim()}` });
 
     const isOpenAI = modelToUse.startsWith('openai/');
     const requestBody: Record<string, unknown> = {
@@ -137,9 +137,10 @@ Your output should be ONLY the generated prompt text.`;
     return new Response(JSON.stringify({ prompt: generatedPrompt }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in generate-flux-prompt function:', error);
-    return new Response(JSON.stringify({ error: error.message || 'Failed to generate prompt' }), {
+    const message = error instanceof Error ? error.message : 'Failed to generate prompt';
+    return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });

@@ -109,7 +109,7 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
       systemContent += `\n\nAdditional instructions: ${directions.trim()}`;
     }
 
-    const messages = [
+    const messages: Array<{ role: string; content: string | Array<Record<string, unknown>> }> = [
       { role: 'system', content: systemContent }
     ];
 
@@ -204,9 +204,10 @@ Output: "You traded a warrior for a memory. May your next medical bill be carved
     return new Response(JSON.stringify({ quote: generatedQuote }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in generate-quote function:', error);
-    return new Response(JSON.stringify({ error: error.message || 'Failed to generate quote' }), {
+    const message = error instanceof Error ? error.message : 'Failed to generate quote';
+    return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
