@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Index from "./pages/Index";
 import FluxPrompt from "./pages/FluxPrompt";
+import ImageGen from "./pages/ImageGen";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,6 +68,7 @@ function AppContent() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/flux" element={<FluxPrompt />} />
+              <Route path="/image" element={<ImageGen />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

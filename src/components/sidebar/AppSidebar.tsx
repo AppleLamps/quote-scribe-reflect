@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Search, BookOpen, Trash2, LogOut, User, Quote as QuoteIcon, Sparkles, Wand2 } from "lucide-react";
+import { Search, BookOpen, Trash2, LogOut, User, Quote as QuoteIcon, Sparkles, Wand2, ImageIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Sidebar,
@@ -91,6 +91,15 @@ export function AppSidebar() {
                 >
                   <Wand2 className="h-4 w-4" />
                   Flux Prompt Generator
+                </Button>
+              </Link>
+              <Link to="/image">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 h-10 text-foreground/80 hover:text-foreground hover:bg-glass/50 transition-all duration-200"
+                >
+                  <ImageIcon className="h-4 w-4" />
+                  Image Generator
                 </Button>
               </Link>
             </div>
