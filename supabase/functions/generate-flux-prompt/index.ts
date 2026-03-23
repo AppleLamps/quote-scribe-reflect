@@ -92,7 +92,7 @@ Your output should be ONLY the generated prompt text.`;
       { role: 'system', content: systemContent }
     ];
 
-    messages.push({ role: 'user', content: [{ type: 'text', text: `Idea to convert to Flux prompt: ${text.trim()}` }] });
+    messages.push({ role: 'user', content: `Idea to convert to Flux prompt: ${text.trim()}` });
 
     const isOpenAI = modelToUse.startsWith('openai/');
     const requestBody: Record<string, unknown> = {
