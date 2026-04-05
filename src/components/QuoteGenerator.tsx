@@ -220,7 +220,7 @@ export function QuoteGenerator() {
                   {isLoading ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
-                      Reflecting...
+                      Reflecting on your words...
                     </>
                   ) : (
                     <>
