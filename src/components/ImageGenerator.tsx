@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +8,8 @@ import { Loader2, Sparkles, ImageIcon, Download } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { FileUpload, UploadedFile } from "@/components/FileUpload";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
 
 const IMAGE_MODELS = [
   { value: 'google/gemini-3.1-flash-image-preview', label: 'Nano Banana 2', description: 'Fast & high quality' },
@@ -15,16 +17,50 @@ const IMAGE_MODELS = [
   { value: 'google/gemini-2.5-flash-image', label: 'Nano Banana', description: 'Fast generation' },
 ];
 
+const STEP_MESSAGES = [
+  { text: "Crafting the perfect prompt...", duration: 6000 },
+  { text: "Generating your image...", duration: 0 },
+];
+
 export function ImageGenerator() {
   const [inputText, setInputText] = useState("");
   const [generatedImage, setGeneratedImage] = useState("");
   const [imageDescription, setImageDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingStep, setLoadingStep] = useState(0);
+  const [progress, setProgress] = useState(0);
   const [attachedFiles, setAttachedFiles] = useState<UploadedFile[]>([]);
   const [additionalDirections, setAdditionalDirections] = useState("");
   const [selectedModel, setSelectedModel] = useState("google/gemini-3.1-flash-image-preview");
   const { toast } = useToast();
   const { user } = useAuth();
+
+  // Animate progress bar during loading
+  useEffect(() => {
+    if (!isLoading) {
+      setProgress(0);
+      setLoadingStep(0);
+      return;
+    }
+
+    // Move to step 2 after ~6s
+    const stepTimer = setTimeout(() => {
+      setLoadingStep(1);
+    }, STEP_MESSAGES[0].duration);
+
+    // Smooth progress animation
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 92) return prev; // cap at 92 until done
+        return prev + (prev < 40 ? 2 : prev < 70 ? 1 : 0.3);
+      });
+    }, 300);
+
+    return () => {
+      clearTimeout(stepTimer);
+      clearInterval(interval);
+    };
+  }, [isLoading]);
 
   const generateImage = async () => {
     if (!inputText.trim() && attachedFiles.length === 0) {
@@ -37,11 +73,14 @@ export function ImageGenerator() {
     }
 
     setIsLoading(true);
+    setLoadingStep(0);
+    setProgress(0);
+
     try {
       const { data, error } = await supabase.functions.invoke('generate-image', {
         body: {
           text: inputText.trim(),
-          files: attachedFiles,
+          files: attachedFiles.length > 0 ? attachedFiles : undefined,
           directions: additionalDirections.trim() || undefined,
           model: selectedModel,
         }
@@ -50,6 +89,7 @@ export function ImageGenerator() {
       if (error) throw error;
       if (data.error) throw new Error(data.error);
 
+      setProgress(100);
       setGeneratedImage(data.imageUrl);
       setImageDescription(data.description || "");
       toast({
@@ -193,8 +233,37 @@ export function ImageGenerator() {
           </CardContent>
         </Card>
 
+        {/* Loading Progress Section */}
+        {isLoading && (
+          <Card variant="premium" className="relative overflow-hidden mb-12 animate-fade-in-up">
+            <CardContent className="p-10">
+              <div className="space-y-6">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                    <div className="absolute inset-0 h-8 w-8 bg-primary/20 blur-lg"></div>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-lg font-semibold text-foreground font-inter animate-pulse">
+                      {STEP_MESSAGES[loadingStep].text}
+                    </p>
+                    <p className="text-sm text-muted-foreground font-inter mt-1">
+                      Step {loadingStep + 1} of 2
+                    </p>
+                  </div>
+                </div>
+                <Progress value={progress} className="h-2" />
+                {/* Shimmer placeholder for the image */}
+                <div className="max-w-4xl mx-auto rounded-2xl overflow-hidden">
+                  <Skeleton className="w-full h-[300px] md:h-[400px]" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Generated Image Section */}
-        {generatedImage && (
+        {generatedImage && !isLoading && (
           <Card variant="premium" className="relative overflow-hidden group animate-slide-in-from-bottom">
             <div className="absolute inset-0 bg-gradient-primary opacity-5 group-hover:opacity-10 transition-all duration-700"></div>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-1 bg-gradient-primary rounded-full shadow-glow"></div>
